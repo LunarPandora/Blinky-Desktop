@@ -1,0 +1,106 @@
+.root{
+    -fx-primary: "#5A4FDF";
+    -fx-blue: "#4E9FFF";
+    -fx-red: "#DE6262";
+    -fx-yellow: "#FCCB4E";
+    -fx-font-family: "Figtree";
+    -fx-font-size: 15px;
+}
+
+.btn{
+    -fx-padding: 10px 30px;
+    -fx-font-size: 16px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-font-family: "Figtree SemiBold";
+}
+
+.btn-primary{
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: "white";
+}
+
+.btn-blue{
+    -fx-background-color: -fx-blue;
+    -fx-text-fill: "white";
+}
+
+.btn-red{
+    -fx-background-color: -fx-red;
+    -fx-text-fill: "white";
+}
+
+.btn-yellow{
+    -fx-background-color: -fx-yellow;
+    -fx-text-fill: "white";
+}
+
+.rounded{
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+
+.bg-primary{
+    -fx-background-color: -fx-primary;
+}
+
+.bg-white{
+    -fx-background-color: "white";
+}
+
+.title{
+    -fx-fill: -fx-primary;
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 60px;
+    -fx-padding: 20px;
+}
+
+.subtitle{
+    -fx-font-family: "Figtree Medium";
+    -fx-font-size: 18px;
+    -fx-padding: 20px;
+}
+
+.lbl_admin_name{
+    -fx-font-size: 17px;
+    -fx-font-family: "Figtree SemiBold";
+}
+
+.input, .input:focused{
+    -fx-border-color: -fx-primary;
+    -fx-border-radius: 10px;
+    -fx-border-width: 2px;
+    -fx-focus-color: none;
+    -fx-text-box-border: transparent;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+}
+
+.lbl_navbar{
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-font-family: "Figtree";
+}
+
+.border-limit{
+    -fx-border-style: solid;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #4137B4AA;
+}
+
+.body-pane-m{
+    -fx-border-insets: 20px 0 20px 0;
+    -fx-background-insets: 20px 0 20px 0;
+}
+
+.table-title{
+    -fx-fill: -fx-primary;
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 20px;
+}
+
+.table-header{
+    -fx-border-style: solid;
+    -fx-border-width: 1 0 1 0;
+    -fx-border-color: #4137B4AA;
+}
