@@ -1,11 +1,13 @@
 package com.blinky.istesa;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.blinky.istesa.TableLayout.TableDosen;
+import com.blinky.istesa.TableLayout.TableKaprodi;
 import com.blinky.istesa.TableLayout.TableMahasiswa;
+import com.blinky.istesa.TableLayout.TableProdi;
+import com.blinky.istesa.TableLayout.TableWarek;
 import com.blinky.istesa.component.TableRoute;
 
 import javafx.geometry.Insets;
@@ -33,7 +35,10 @@ public class Home {
     private TableRoute[] listTableA = new TableRoute[]
     {
         new TableRoute("Mahasiswa", new TableMahasiswa().getPane(), new Button("Data Mahasiswa")),
-        new TableRoute("Dosen", new TableDosen().getPane(), new Button("Data Dosen"))
+        new TableRoute("Dosen", new TableDosen().getPane(), new Button("Data Dosen")),
+        new TableRoute("Kaprodi", new TableKaprodi().getPane(), new Button("Data Kaprodi")),
+        new TableRoute("Warek", new TableWarek().getPane(), new Button("Data Warek")),
+        new TableRoute("Prodi", new TableProdi().getPane(), new Button("Data Prodi")),
     };
 
     private TableRoute[] listTableM = new TableRoute[]
