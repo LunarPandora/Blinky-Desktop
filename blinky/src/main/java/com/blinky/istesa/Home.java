@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.blinky.istesa.TableLayout.TableDosen;
+import com.blinky.istesa.TableLayout.TableJadwal;
 import com.blinky.istesa.TableLayout.TableKaprodi;
+import com.blinky.istesa.TableLayout.TableKelas;
 import com.blinky.istesa.TableLayout.TableMahasiswa;
+import com.blinky.istesa.TableLayout.TableMatkul;
 import com.blinky.istesa.TableLayout.TableProdi;
+import com.blinky.istesa.TableLayout.TableStatusAbsensi;
 import com.blinky.istesa.TableLayout.TableWarek;
 import com.blinky.istesa.component.TableRoute;
 
@@ -39,11 +43,15 @@ public class Home {
         new TableRoute("Kaprodi", new TableKaprodi().getPane(), new Button("Data Kaprodi")),
         new TableRoute("Warek", new TableWarek().getPane(), new Button("Data Warek")),
         new TableRoute("Prodi", new TableProdi().getPane(), new Button("Data Prodi")),
+        new TableRoute("Kelas", new TableKelas().getPane(), new Button("Data Kelas")),
+        new TableRoute("Matkul", new TableMatkul().getPane(), new Button("Data Matkul")),
+        new TableRoute("StatusAbsensi", new TableStatusAbsensi().getPane(), new Button("Data Status Absensi")),
+        new TableRoute("Jadwal", new TableJadwal().getPane(), new Button("Data Jadwal")),
     };
 
     private TableRoute[] listTableM = new TableRoute[]
     {
-        new TableRoute("Mahasiswa", new TableMahasiswa().getPane(), new Button("Status Absensi")),
+        new TableRoute("Mahasiswa", new TableMahasiswa().getPane(), new Button("Histori Absensi")),
         // "Dosen", "Kelas", "Matkul", "Prodi", "Warek", "Kaprodi", "StatusAbsensi"
     };
 

@@ -77,7 +77,7 @@ public class TableKelas implements Table{
     public TableView<Kelas> createTable(){
         TableColumn<Kelas, String> col_id = new TableColumn<>("ID");
         TableColumn<Kelas, String> col_nama = new TableColumn<>("Nama Kelas");
-        TableColumn<Kelas, String> col_insert = new TableColumn<>("Waktu Pendaftaran");
+        TableColumn<Kelas, String> col_insert = new TableColumn<>("Ditambahkan pada");
         TableColumn<Kelas, String> col_update = new TableColumn<>("Terakhir kali diedit");
 
         col_id.setCellValueFactory(v -> v.getValue().idKelasProperty());

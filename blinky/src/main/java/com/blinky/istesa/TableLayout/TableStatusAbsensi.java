@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.blinky.istesa.DB;
-import com.blinky.istesa.obj.Prodi;
+import com.blinky.istesa.obj.StatusAbsensi;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,13 +22,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public class TableProdi implements Table{
+public class TableStatusAbsensi implements Table{
     private final BorderPane rootPane;
     
-    private List<Prodi> listProdi;
-    private TableView<Prodi> tb = new TableView<Prodi>();
+    private List<StatusAbsensi> listStatusAbsensi;
+    private TableView<StatusAbsensi> tb = new TableView<StatusAbsensi>();
 
-    public TableProdi(){
+    public TableStatusAbsensi(){
         rootPane = new BorderPane();
         tb.setColumnResizePolicy((param) -> true);
 
@@ -40,7 +40,7 @@ public class TableProdi implements Table{
         HBox filterPane = new HBox();
         List<Node> paneList = new ArrayList<Node>();
         
-        Label namaTabel = new Label("Data Prodi");
+        Label namaTabel = new Label("Data Status Absensi");
         TextField searchBar = new TextField();
         ComboBox<String> jenis = new ComboBox<String>();
         
@@ -74,18 +74,18 @@ public class TableProdi implements Table{
         return filterPane;
     }
 
-    public TableView<Prodi> createTable(){
-        TableColumn<Prodi, String> col_id = new TableColumn<>("ID");
-        TableColumn<Prodi, String> col_nama = new TableColumn<>("Nama Prodi");
-        TableColumn<Prodi, String> col_insert = new TableColumn<>("Ditambahkan pada");
-        TableColumn<Prodi, String> col_update = new TableColumn<>("Terakhir kali diedit");
+    public TableView<StatusAbsensi> createTable(){
+        TableColumn<StatusAbsensi, String> col_id = new TableColumn<>("ID");
+        TableColumn<StatusAbsensi, String> col_nama = new TableColumn<>("Nama Status Absensi");
+        TableColumn<StatusAbsensi, String> col_insert = new TableColumn<>("Ditambahkan pada");
+        TableColumn<StatusAbsensi, String> col_update = new TableColumn<>("Terakhir kali diedit");
 
-        col_id.setCellValueFactory(v -> v.getValue().idProdiProperty());
-        col_nama.setCellValueFactory(v -> v.getValue().nmProdiProperty());
+        col_id.setCellValueFactory(v -> v.getValue().idStatusAbsensiProperty());
+        col_nama.setCellValueFactory(v -> v.getValue().nmStatusAbsensiProperty());
         col_insert.setCellValueFactory(v -> v.getValue().tglDitambahProperty());
         col_update.setCellValueFactory(v -> v.getValue().tglDiupdateProperty());
 
-        ArrayList<TableColumn<Prodi, String>> col = new ArrayList<>();
+        ArrayList<TableColumn<StatusAbsensi, String>> col = new ArrayList<>();
         col.add(col_id);
         col.add(col_nama);
         col.add(col_insert);
@@ -101,18 +101,18 @@ public class TableProdi implements Table{
 
     public HBox getTable(){
         HBox table = new HBox();
-        TableView<Prodi> tb = createTable();
+        TableView<StatusAbsensi> tb = createTable();
 
         // table.prefWidthProperty().bind(rootPane.widthProperty());
         HBox.setHgrow(table, Priority.ALWAYS);
         HBox.setHgrow(tb, Priority.ALWAYS);
         VBox.setVgrow(tb, Priority.ALWAYS);
 
-        List<Prodi> list_prodi = getData();
+        List<StatusAbsensi> list_statusAbsensi = getData();
         // SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy, hh:mm");   
 
-        for(int y = 0; y < list_prodi.size(); y++){
-            tb.getItems().add(list_prodi.get(y));
+        for(int y = 0; y < list_statusAbsensi.size(); y++){
+            tb.getItems().add(list_statusAbsensi.get(y));
             // System.out.println(list_mhswa.get(y).tgl_ditambah);        
         }
 
@@ -121,20 +121,20 @@ public class TableProdi implements Table{
         return table;
     }
 
-    public List<Prodi> getData(){
+    public List<StatusAbsensi> getData(){
         DB db = new DB();
 
-        List<Object> rs = db.runQuery("SELECT * FROM tb_prodi");
-        listProdi = new ArrayList<Prodi>();
+        List<Object> rs = db.runQuery("SELECT * FROM tb_status_absensi");
+        listStatusAbsensi = new ArrayList<StatusAbsensi>();
 
         for(int i = 0; i < rs.size(); i++){
             // System.out.println(rs.get(i));
-            Prodi prodi = new Prodi(rs.get(i));
+            StatusAbsensi statusAbsensi = new StatusAbsensi(rs.get(i));
 
-            listProdi.add(prodi);
+            listStatusAbsensi.add(statusAbsensi);
         }
         
-        return listProdi;
+        return listStatusAbsensi;
     }
 
     public BorderPane getPane(){
