@@ -132,9 +132,9 @@ public class TableMahasiswa implements Table{
 
     public List<Mahasiswa> getData(){
         DB db = new DB();
-        String query = "SELECT id_mhswa, nm_kelas, nm_prodi, nm_mhswa, angkatan, m.tgl_ditambah, m.tgl_diupdate, foto_mhswa, id_admin FROM tb_mahasiswa AS m INNER JOIN tb_kelas AS k ON m.id_kelas = k.id_kelas INNER JOIN tb_prodi AS p ON m.id_prodi = p.id_prodi;";
+        String query_admin = "SELECT id_mhswa, nm_kelas, nm_prodi, nm_mhswa, angkatan, m.tgl_ditambah, m.tgl_diupdate, foto_mhswa, id_admin FROM tb_mahasiswa AS m INNER JOIN tb_kelas AS k ON m.id_kelas = k.id_kelas INNER JOIN tb_prodi AS p ON m.id_prodi = p.id_prodi;";
 
-        List<Object> rs = db.runQuery(query);
+        List<Object> rs = db.runQuery(query_admin);
         listMhswa = new ArrayList<Mahasiswa>();
 
         for(int i = 0; i < rs.size(); i++){

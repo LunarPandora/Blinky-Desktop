@@ -1,11 +1,12 @@
 package com.blinky.istesa.component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.blinky.istesa.DB;
+import com.blinky.istesa.obj.Admin;
+import com.blinky.istesa.obj.Dosen;
+import com.blinky.istesa.obj.Mahasiswa;
 
-@SuppressWarnings("unchecked")
 public class Login {
     private String id;
     private String pw;
@@ -20,34 +21,31 @@ public class Login {
         return u_name;
     }
 
-    public String authenticate(){
+    public Account authenticate(){
         DB db = new DB();
 
-        if(id.substring(0, 1).equals("A")){
-            List<Object> rs = db.runQuery("SELECT * FROM tb_admin WHERE id_admin = '" + id + "' and pw_admin = '" + pw + "'");
+        String query_admin = "SELECT * FROM tb_admin WHERE u_admin = '" + id + "' and pw_admin = '" + pw + "'";
+        String query_mhswa = "SELECT * FROM tb_mahasiswa WHERE id_mhswa = '" + id + "' and pw_mhswa = '" + pw + "'";
+        String query_dosen = "SELECT * FROM tb_dosen WHERE u_dosen = '" + id + "' and pw_dosen = '" + pw + "'";
 
+        List<Object> rs = db.runQuery(query_admin);
+        if(rs.isEmpty()){
+            rs = db.runQuery(query_mhswa);
             if(rs.isEmpty()){
-                return "ADMIN_ERR";
+                rs = db.runQuery(query_dosen);
+                if(rs.isEmpty()){
+                    return new Account();
+                }
+                else{
+                    return new Account("Dosen", new Dosen(rs.get(0)));
+                }
             }
             else{
-                List<String> u_data = ((ArrayList<String>) rs.get(0));
-                u_name = u_data.get(1);
-
-                return "ADMIN_OK";
+                return new Account("Mahasiswa", new Mahasiswa(rs.get(0)));
             }
         }
         else{
-            List<Object> rs = db.runQuery("SELECT * FROM tb_mahasiswa WHERE id_mhswa = '" + id + "' and pw_mhswa = '" + pw + "'");
-
-            if(rs.isEmpty()){
-                return "MHSWA_ERR";
-            }
-            else{
-                List<String> u_data = ((ArrayList<String>) rs.get(0));
-                u_name = u_data.get(3);
-
-                return "MHSWA_OK";
-            }
+            return new Account("Admin", new Admin(rs.get(0)));
         }
     }
 }

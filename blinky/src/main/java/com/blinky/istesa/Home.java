@@ -3,6 +3,7 @@ package com.blinky.istesa;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.blinky.istesa.TableLayout.TableAbsensi;
 import com.blinky.istesa.TableLayout.TableDosen;
 import com.blinky.istesa.TableLayout.TableJadwal;
 import com.blinky.istesa.TableLayout.TableKaprodi;
@@ -12,7 +13,11 @@ import com.blinky.istesa.TableLayout.TableMatkul;
 import com.blinky.istesa.TableLayout.TableProdi;
 import com.blinky.istesa.TableLayout.TableStatusAbsensi;
 import com.blinky.istesa.TableLayout.TableWarek;
+import com.blinky.istesa.component.Account;
 import com.blinky.istesa.component.TableRoute;
+import com.blinky.istesa.obj.Admin;
+import com.blinky.istesa.obj.Dosen;
+import com.blinky.istesa.obj.Mahasiswa;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,30 +39,46 @@ public class Home {
     private final BorderPane rootPane;
     private String jenisTabel = "Mahasiswa";
     private String userType;
-    private String userName;
-    
-    private TableRoute[] listTableA = new TableRoute[]
-    {
-        new TableRoute("Mahasiswa", new TableMahasiswa().getPane(), new Button("Data Mahasiswa")),
-        new TableRoute("Dosen", new TableDosen().getPane(), new Button("Data Dosen")),
-        new TableRoute("Kaprodi", new TableKaprodi().getPane(), new Button("Data Kaprodi")),
-        new TableRoute("Warek", new TableWarek().getPane(), new Button("Data Warek")),
-        new TableRoute("Prodi", new TableProdi().getPane(), new Button("Data Prodi")),
-        new TableRoute("Kelas", new TableKelas().getPane(), new Button("Data Kelas")),
-        new TableRoute("Matkul", new TableMatkul().getPane(), new Button("Data Matkul")),
-        new TableRoute("StatusAbsensi", new TableStatusAbsensi().getPane(), new Button("Data Status Absensi")),
-        new TableRoute("Jadwal", new TableJadwal().getPane(), new Button("Data Jadwal")),
-    };
 
-    private TableRoute[] listTableM = new TableRoute[]
-    {
-        new TableRoute("Mahasiswa", new TableMahasiswa().getPane(), new Button("Histori Absensi")),
-        // "Dosen", "Kelas", "Matkul", "Prodi", "Warek", "Kaprodi", "StatusAbsensi"
-    };
+    private Admin userAdmin;
+    private Mahasiswa userMhswa;
+    private Dosen userDosen;
+    private TableRoute[] listTable;
 
-    public Home(String u_type, String user_data){
-        userType = u_type;
-        userName = user_data;
+    public Home(Account acc){
+        userType = acc.getUserType();
+
+        if(userType.equals("Admin")){
+            userAdmin = acc.getAdminData();
+            listTable = new TableRoute[]
+            {
+                new TableRoute("Mahasiswa", new TableMahasiswa().getPane(), new Button("Data Mahasiswa")),
+                new TableRoute("Dosen", new TableDosen().getPane(), new Button("Data Dosen")),
+                new TableRoute("Kaprodi", new TableKaprodi().getPane(), new Button("Data Kaprodi")),
+                new TableRoute("Warek", new TableWarek().getPane(), new Button("Data Warek")),
+                new TableRoute("Prodi", new TableProdi().getPane(), new Button("Data Prodi")),
+                new TableRoute("Kelas", new TableKelas().getPane(), new Button("Data Kelas")),
+                new TableRoute("Matkul", new TableMatkul().getPane(), new Button("Data Matkul")),
+                new TableRoute("StatusAbsensi", new TableStatusAbsensi().getPane(), new Button("Data Status Absensi")),
+                new TableRoute("Jadwal", new TableJadwal().getPane(), new Button("Data Jadwal")),
+            };
+        }
+        else if(userType.equals("Dosen")){
+            userDosen = acc.getDosenData();
+            listTable = new TableRoute[]
+            {
+                new TableRoute("Absensi", new TableAbsensi(userDosen.getIdDosen(), "dosen").getPane(), new Button("Absensi")),
+                // "Dosen", "Kelas", "Matkul", "Prodi", "Warek", "Kaprodi", "StatusAbsensi"
+            };
+        }
+        else{
+            userMhswa = acc.getMhswaData();
+            listTable = new TableRoute[]
+            {
+                new TableRoute("Absensi", new TableAbsensi(userMhswa.getIdMahasiswa(), "mhswa").getPane(), new Button("Histori Absensi")),
+                // "Dosen", "Kelas", "Matkul", "Prodi", "Warek", "Kaprodi", "StatusAbsensi"
+            };
+        }
 
         // BorderPane (Root)
         rootPane = new BorderPane();
@@ -80,8 +101,9 @@ public class Home {
         icon_plc.setImage(icon);
 
         // AccPane (Detail Akun Admin (Nama, Foto))
-        Label lbl_namaAdmin = new Label(userName);
-        Label lbl_roleAdmin = new Label((userType.equals("MHSWA")) ? "Mahasiswa" : "Admin");
+        Label lbl_namaAdmin = new Label(userType.equals("Mahasiswa") ? userMhswa.getNmMahasiswa() : userType.equals("Dosen") ? userDosen.getNmDosen() : userAdmin.getNmAdmin());
+        Label lbl_roleAdmin = new Label(userType);
+        jenisTabel = listTable[0].routeName;
 
         Image fp = new Image("fp.png");
         ImageView fp_plc = new ImageView();
@@ -125,17 +147,16 @@ public class Home {
 
     public HBox navbarPane(){
         // ListPane (Ribbon untuk list tabel atau navbar tabel)
-        HBox listPaneA = new HBox();
-        HBox listPaneM = new HBox();
+        HBox listPane = new HBox();
 
-        HBox.setHgrow(listPaneA, Priority.ALWAYS);
-        listPaneA.setSpacing(20);
-        listPaneA.setPadding(new Insets(0, 0, 10, 0));
-        listPaneA.setAlignment(Pos.CENTER_LEFT);
-        listPaneA.getStyleClass().addAll(new String[]{"border-limit"});
-        for(int i = 0; i < listTableA.length; i++){
-            Button btn = listTableA[i].button;
-            String link = listTableA[i].routeName;
+        HBox.setHgrow(listPane, Priority.ALWAYS);
+        listPane.setSpacing(20);
+        listPane.setPadding(new Insets(0, 0, 10, 0));
+        listPane.setAlignment(Pos.CENTER_LEFT);
+        listPane.getStyleClass().addAll(new String[]{"border-limit"});
+        for(int i = 0; i < listTable.length; i++){
+            Button btn = listTable[i].button;
+            String link = listTable[i].routeName;
             
             btn.setOnAction(e -> {
                 jenisTabel = link;
@@ -143,39 +164,14 @@ public class Home {
                 rootPane.setCenter(bodyPane());
             });
 
-            listPaneA.getChildren().add(btn);
+            listPane.getChildren().add(btn);
         }
 
-        listPaneM.setSpacing(20);
-        listPaneM.setPadding(new Insets(0, 0, 10, 0));
-        listPaneM.setAlignment(Pos.CENTER_LEFT);
-        listPaneM.getStyleClass().addAll(new String[]{"border-limit"});
-        for(int i = 0; i < listTableM.length; i++){
-            Button btn = listTableM[i].button;
-            String link = listTableM[i].routeName;
-
-            btn.setOnAction(e -> {
-                jenisTabel = link;
-                rootPane.setCenter(null);
-                rootPane.setCenter(bodyPane());
-            });
-
-            listPaneM.getChildren().add(btn);
+        for(int x = 0; x < listPane.getChildren().size(); x++) {
+            listPane.getChildren().get(x).getStyleClass().addAll(new String[]{"lbl_navbar"});
         }
-
-        for(int x = 0; x < listPaneA.getChildren().size(); x++) {
-            listPaneA.getChildren().get(x).getStyleClass().addAll(new String[]{"lbl_navbar"});
-        }
-        for(int x = 0; x < listPaneM.getChildren().size(); x++) {
-            listPaneM.getChildren().get(x).getStyleClass().addAll(new String[]{"lbl_navbar"});
-        }
-
-        if(userType == "MHSWA"){
-            return listPaneM;
-        }
-        else{
-            return listPaneA;
-        }
+        
+        return listPane;
     }
 
     public VBox bodyPane(){
@@ -188,21 +184,12 @@ public class Home {
         bodyPane.getStyleClass().addAll(new String[]{"bg-white", "rounded", "body-pane-m"});        
 
         paneList.add(navbarPane());
-        if(userType == "MHSWA"){
-            for(int i = 0; i < listTableM.length; i++){
-                if(listTableM[i].routeName == jenisTabel){
-                    paneList.add(listTableM[i].table);
-                }
+        for(int i = 0; i < listTable.length; i++){
+            if(listTable[i].routeName == jenisTabel){
+                paneList.add(listTable[i].table);
             }
         }
-        else{
-            for(int i = 0; i < listTableA.length; i++){
-                if(listTableA[i].routeName == jenisTabel){
-                    paneList.add(listTableA[i].table);
-                }
-            }
-        }
-
+        
         for(int x = 0; x < paneList.size(); x++){
             bodyPane.getChildren().add(paneList.get(x));
         }

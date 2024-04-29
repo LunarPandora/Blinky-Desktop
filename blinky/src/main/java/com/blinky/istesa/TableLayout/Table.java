@@ -6,7 +6,5 @@ import javafx.scene.layout.HBox;
 interface Table{
     public final BorderPane rootPane = new BorderPane();
 
-    public HBox getTable();
     public HBox filterPane();
-    public BorderPane getPane();
 }

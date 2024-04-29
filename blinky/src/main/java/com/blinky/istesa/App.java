@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import com.blinky.istesa.component.Account;
 import com.blinky.istesa.component.Login;
 
 /**
@@ -105,18 +106,15 @@ public class App extends Application {
 
         login.setOnAction(e -> {
             Login auth = new Login(txt_uname.getText(), txt_pass.getText());
-            String auth_r = auth.authenticate();
-            if(auth_r == "MHSWA_OK"){
-                Home home = new Home("MHSWA", auth.getCurrentUser());
-                window.getScene().setRoot(home.getRootPane());
-            }
-            else if(auth_r == "ADMIN_OK"){
-                Home home = new Home("ADMIN", auth.getCurrentUser());
-                window.getScene().setRoot(home.getRootPane());
-            }
-            else{
+            Account acc = auth.authenticate();
+
+            if(acc.getUserType().equals("Denied")){
                 Alert a = new Alert(AlertType.ERROR);
                 a.setContentText("Maaf, ID atau password anda salah. Harap cek kembali input anda.");
+            }
+            else{
+                Home home = new Home(acc);
+                window.getScene().setRoot(home.getRootPane());
             }
         });
 
