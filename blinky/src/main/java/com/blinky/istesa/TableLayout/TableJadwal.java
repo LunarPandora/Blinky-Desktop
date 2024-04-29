@@ -135,8 +135,9 @@ public class TableJadwal implements Table{
 
     public List<Jadwal> getData(){
         DB db = new DB();
+        String query = "SELECT id_jadwal, jam, hari, nm_kelas, nm_dosen, nm_matkul, j.tgl_ditambah, j.tgl_diupdate FROM tb_jadwal AS j INNER JOIN tb_kelas AS k ON j.id_kelas = k.id_kelas INNER JOIN tb_dosen AS d ON j.id_dosen = d.id_dosen INNER JOIN tb_matkul AS m ON j.id_matkul = m.id_matkul ORDER BY j.id_jadwal ASC;";
 
-        List<Object> rs = db.runQuery("SELECT * FROM tb_jadwal");
+        List<Object> rs = db.runQuery(query);
         listMhswa = new ArrayList<Jadwal>();
 
         for(int i = 0; i < rs.size(); i++){

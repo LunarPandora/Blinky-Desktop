@@ -129,8 +129,9 @@ public class TableKaprodi implements Table{
 
     public List<Kaprodi> getData(){
         DB db = new DB();
+        String query = "SELECT id_kaprodi, nm_kaprodi, u_kaprodi, pw_kaprodi, foto_kaprodi, nm_prodi, nidn, kp.tgl_ditambah, kp.tgl_diupdate FROM tb_kaprodi AS kp INNER JOIN tb_prodi AS p ON kp.id_prodi = p.id_prodi";
 
-        List<Object> rs = db.runQuery("SELECT * FROM tb_kaprodi");
+        List<Object> rs = db.runQuery(query);
         listKaprodi = new ArrayList<Kaprodi>();
 
         for(int i = 0; i < rs.size(); i++){
