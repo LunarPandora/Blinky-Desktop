@@ -9,7 +9,8 @@ import javafx.beans.property.StringProperty;
 @SuppressWarnings("unchecked")
 public class Jadwal {
     private final StringProperty idJadwal = new SimpleStringProperty();
-    private final StringProperty jam = new SimpleStringProperty();
+    private final StringProperty jamMulai = new SimpleStringProperty();
+    private final StringProperty jamSelesai = new SimpleStringProperty();
     private final StringProperty hari = new SimpleStringProperty();
     private final StringProperty idKelas = new SimpleStringProperty();
     private final StringProperty idDosen = new SimpleStringProperty();
@@ -21,13 +22,14 @@ public class Jadwal {
         List<String> list = ((ArrayList<String>) obj);
 
         idJadwal.set(list.get(0).toString());
-        jam.set(list.get(1).toString());
-        hari.set(list.get(2).toString());
-        idKelas.set(list.get(3).toString());
-        idDosen.set(list.get(4).toString());
-        idMatkul.set(list.get(5).toString());
-        tglDitambah.set(list.get(6).toString());
-        tglDiupdate.set(list.get(7).toString());
+        jamMulai.set(list.get(1).toString());
+        jamSelesai.set(list.get(2).toString());
+        hari.set(list.get(3).toString());
+        idKelas.set(list.get(4).toString());
+        idDosen.set(list.get(5).toString());
+        idMatkul.set(list.get(6).toString());
+        tglDitambah.set(list.get(7).toString());
+        tglDiupdate.set(list.get(8).toString());
     }
 
     public StringProperty idJadwalProperty() {
@@ -42,16 +44,28 @@ public class Jadwal {
         this.idJadwal.set(idJadwal);
     }
 
-    public StringProperty jamProperty() {
-        return jam;
+    public StringProperty jamMulaiProperty() {
+        return jamMulai;
     }
 
-    public String getJam() {
-        return jam.get();
+    public String getJamMulai() {
+        return jamMulai.get();
     }
 
-    public void setJam(String jam) {
-        this.jam.set(jam);
+    public void setJamMulai(String jamMulai) {
+        this.jamMulai.set(jamMulai);
+    }
+
+    public StringProperty jamSelesaiProperty() {
+        return jamSelesai;
+    }
+
+    public String getJamSelesai() {
+        return jamSelesai.get();
+    }
+
+    public void setJamSelesai(String jamSelesai) {
+        this.jamSelesai.set(jamSelesai);
     }
 
     public StringProperty hariProperty() {

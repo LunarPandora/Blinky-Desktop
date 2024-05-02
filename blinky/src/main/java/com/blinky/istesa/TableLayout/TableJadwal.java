@@ -79,7 +79,8 @@ public class TableJadwal implements Table{
         TableColumn<Jadwal, String> col_matkul = new TableColumn<>("Mata Kuliah");
         TableColumn<Jadwal, String> col_dosen = new TableColumn<>("Dosen");
         TableColumn<Jadwal, String> col_kelas = new TableColumn<>("Kelas");
-        TableColumn<Jadwal, String> col_jam = new TableColumn<>("Jam");
+        TableColumn<Jadwal, String> col_jamM = new TableColumn<>("Jam Mulai");
+        TableColumn<Jadwal, String> col_jamS = new TableColumn<>("Jam Selesai");
         TableColumn<Jadwal, String> col_hari = new TableColumn<>("Hari");
         TableColumn<Jadwal, String> col_insert = new TableColumn<>("Ditambahkan pada");
         TableColumn<Jadwal, String> col_update = new TableColumn<>("Terakhir kali diedit");
@@ -88,7 +89,8 @@ public class TableJadwal implements Table{
         col_matkul.setCellValueFactory(v -> v.getValue().idMatkulProperty());
         col_dosen.setCellValueFactory(v -> v.getValue().idDosenProperty());
         col_kelas.setCellValueFactory(v -> v.getValue().idKelasProperty());
-        col_jam.setCellValueFactory(v -> v.getValue().jamProperty());
+        col_jamM.setCellValueFactory(v -> v.getValue().jamMulaiProperty());
+        col_jamS.setCellValueFactory(v -> v.getValue().jamSelesaiProperty());
         col_hari.setCellValueFactory(v -> v.getValue().hariProperty());
         col_insert.setCellValueFactory(v -> v.getValue().tglDitambahProperty());
         col_update.setCellValueFactory(v -> v.getValue().tglDiupdateProperty());
@@ -98,7 +100,8 @@ public class TableJadwal implements Table{
         col.add(col_matkul);
         col.add(col_dosen);
         col.add(col_kelas);
-        col.add(col_jam);
+        col.add(col_jamM);
+        col.add(col_jamS);
         col.add(col_hari);
         col.add(col_insert);
         col.add(col_update);
@@ -135,7 +138,7 @@ public class TableJadwal implements Table{
 
     public List<Jadwal> getData(){
         DB db = new DB();
-        String query = "SELECT id_jadwal, jam, hari, nm_kelas, nm_dosen, nm_matkul, j.tgl_ditambah, j.tgl_diupdate FROM tb_jadwal AS j INNER JOIN tb_kelas AS k ON j.id_kelas = k.id_kelas INNER JOIN tb_dosen AS d ON j.id_dosen = d.id_dosen INNER JOIN tb_matkul AS m ON j.id_matkul = m.id_matkul ORDER BY j.id_jadwal ASC;";
+        String query = "SELECT id_jadwal, jam_mulai, jam_selesai, hari, nm_kelas, nm_dosen, nm_matkul, j.tgl_ditambah, j.tgl_diupdate FROM tb_jadwal AS j INNER JOIN tb_kelas AS k ON j.id_kelas = k.id_kelas INNER JOIN tb_dosen AS d ON j.id_dosen = d.id_dosen INNER JOIN tb_matkul AS m ON j.id_matkul = m.id_matkul ORDER BY j.id_jadwal ASC;";
 
         List<Object> rs = db.runQuery(query);
         listMhswa = new ArrayList<Jadwal>();

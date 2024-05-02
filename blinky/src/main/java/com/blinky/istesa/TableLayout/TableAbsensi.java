@@ -140,9 +140,9 @@ public class TableAbsensi implements Table{
 
     public List<Absensi> getData(String id, String jenis){
         DB db = new DB();
-        String query_dosen = "SELECT id_absensi, nm_mhswa, nm_matkul, waktu_absen, nm_status_absensi, ab.tgl_ditambah, ab.tgl_diupdate FROM tb_absensi AS ab INNER JOIN tb_mahasiswa AS m ON ab.id_mhswa = m.id_mhswa INNER JOIN tb_jadwal AS j ON ab.id_jadwal = j.id_jadwal INNER JOIN tb_matkul AS mk ON j.id_matkul = mk.id_matkul INNER JOIN tb_status_absensi AS sa ON ab.id_status_absensi = sa.id_status_absensi WHERE j.id_dosen = '" + id + "' ORDER BY id_absensi ASC";
+        String query_dosen = "SELECT id_absensi, nm_mhswa, nm_matkul, waktu_absen, nm_status_absensi, ab.tgl_ditambah, ab.tgl_diupdate FROM tb_absensi AS ab INNER JOIN tb_mahasiswa AS m ON ab.id_mhswa = m.id_mhswa INNER JOIN tb_jadwal AS j ON ab.id_jadwal = j.id_jadwal INNER JOIN tb_matkul AS mk ON j.id_matkul = mk.id_matkul INNER JOIN tb_status_absensi AS sa ON ab.id_status_absensi = sa.id_status_absensi WHERE j.id_dosen = '" + id + "' ORDER BY id_absensi DESC";
 
-        String query_mhswa = "SELECT id_absensi, nm_dosen, nm_matkul, waktu_absen, nm_status_absensi, ab.tgl_ditambah, ab.tgl_diupdate FROM tb_absensi AS ab INNER JOIN tb_mahasiswa AS m ON ab.id_mhswa = m.id_mhswa INNER JOIN tb_jadwal AS j ON ab.id_jadwal = j.id_jadwal INNER JOIN tb_matkul AS mk ON j.id_matkul = mk.id_matkul INNER JOIN tb_status_absensi AS sa ON ab.id_status_absensi = sa.id_status_absensi INNER JOIN tb_dosen AS d ON j.id_dosen = d.id_dosen WHERE ab.id_mhswa = '" + id + "' ORDER BY id_absensi ASC";
+        String query_mhswa = "SELECT id_absensi, nm_dosen, nm_matkul, waktu_absen, nm_status_absensi, ab.tgl_ditambah, ab.tgl_diupdate FROM tb_absensi AS ab INNER JOIN tb_mahasiswa AS m ON ab.id_mhswa = m.id_mhswa INNER JOIN tb_jadwal AS j ON ab.id_jadwal = j.id_jadwal INNER JOIN tb_matkul AS mk ON j.id_matkul = mk.id_matkul INNER JOIN tb_status_absensi AS sa ON ab.id_status_absensi = sa.id_status_absensi INNER JOIN tb_dosen AS d ON j.id_dosen = d.id_dosen WHERE ab.id_mhswa = '" + id + "' ORDER BY id_absensi DESC";
 
         List<Object> rs = db.runQuery(jenis.equals("mhswa") ? query_mhswa : query_dosen);
         listMhswa = new ArrayList<Absensi>();

@@ -40,12 +40,28 @@ public class Home {
     private String jenisTabel = "Mahasiswa";
     private String userType;
 
+    private Account acc;
+
     private Admin userAdmin;
     private Mahasiswa userMhswa;
     private Dosen userDosen;
     private TableRoute[] listTable;
 
-    public Home(Account acc){
+    public Home(Account account){
+        acc = account;
+        initTable();
+
+        // BorderPane (Root)
+        rootPane = new BorderPane();
+        rootPane.setPadding(new Insets(25, 40, 25, 40));
+        rootPane.getStyleClass().addAll(new String[]{"bg-primary"});
+
+        rootPane.setTop(headerPane());
+        rootPane.setCenter(bodyPane());
+        rootPane.setBottom(actionButtonPane());
+    }
+
+    private void initTable(){
         userType = acc.getUserType();
 
         if(userType.equals("Admin")){
@@ -79,15 +95,6 @@ public class Home {
                 // "Dosen", "Kelas", "Matkul", "Prodi", "Warek", "Kaprodi", "StatusAbsensi"
             };
         }
-
-        // BorderPane (Root)
-        rootPane = new BorderPane();
-        rootPane.setPadding(new Insets(25, 40, 25, 40));
-        rootPane.getStyleClass().addAll(new String[]{"bg-primary"});
-
-        rootPane.setTop(headerPane());
-        rootPane.setCenter(bodyPane());
-        rootPane.setBottom(actionButtonPane());
     }
 
     public HBox headerPane(){
@@ -206,13 +213,21 @@ public class Home {
         Button btn_tambah = new Button("Tambah");
         Button btn_edit = new Button("Edit");
         Button btn_hapus = new Button("Hapus");
+        Button btn_refresh = new Button("Refresh");
 
         btn_tambah.getStyleClass().addAll(new String[]{"btn", "btn-blue"});
         btn_edit.getStyleClass().addAll(new String[]{"btn", "btn-yellow"});
         btn_hapus.getStyleClass().addAll(new String[]{"btn", "btn-red"});
+        btn_refresh.getStyleClass().addAll(new String[]{"btn", "btn-green"});
 
-        buttonPane.getChildren().addAll(btn_tambah, btn_edit, btn_hapus);
+        buttonPane.getChildren().addAll(btn_tambah, btn_edit, btn_hapus, btn_refresh);
         buttonPane.getStyleClass().addAll(new String[]{"bg-white", "rounded"});
+
+        btn_refresh.setOnAction(e -> {
+            initTable();
+            rootPane.setCenter(null);
+            rootPane.setCenter(bodyPane());
+        });
 
         return buttonPane;
     }

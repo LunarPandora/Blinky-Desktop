@@ -3,6 +3,7 @@
     -fx-blue: "#4E9FFF";
     -fx-red: "#DE6262";
     -fx-yellow: "#FCCB4E";
+    -fx-green: "#1B8C3C";
     -fx-font-family: "Figtree";
     -fx-font-size: 15px;
 }
@@ -32,6 +33,11 @@
 
 .btn-yellow{
     -fx-background-color: -fx-yellow;
+    -fx-text-fill: "white";
+}
+
+.btn-green{
+    -fx-background-color: -fx-green;
     -fx-text-fill: "white";
 }
 
