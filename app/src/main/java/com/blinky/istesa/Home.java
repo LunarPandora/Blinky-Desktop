@@ -3,21 +3,31 @@ package com.blinky.istesa;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.blinky.istesa.TableLayout.TableAbsensi;
-import com.blinky.istesa.TableLayout.TableDosen;
-import com.blinky.istesa.TableLayout.TableJadwal;
-import com.blinky.istesa.TableLayout.TableKaprodi;
-import com.blinky.istesa.TableLayout.TableKelas;
-import com.blinky.istesa.TableLayout.TableMahasiswa;
-import com.blinky.istesa.TableLayout.TableMatkul;
-import com.blinky.istesa.TableLayout.TableProdi;
-import com.blinky.istesa.TableLayout.TableStatusAbsensi;
-import com.blinky.istesa.TableLayout.TableWarek;
-import com.blinky.istesa.component.Account;
-import com.blinky.istesa.component.TableRoute;
-import com.blinky.istesa.obj.Admin;
-import com.blinky.istesa.obj.Dosen;
-import com.blinky.istesa.obj.Mahasiswa;
+import com.blinky.istesa.Components.Account;
+import com.blinky.istesa.Components.TableRoute;
+import com.blinky.istesa.Layout.Form.FormDosen;
+import com.blinky.istesa.Layout.Form.FormJadwal;
+import com.blinky.istesa.Layout.Form.FormKaprodi;
+import com.blinky.istesa.Layout.Form.FormKelas;
+import com.blinky.istesa.Layout.Form.FormMahasiswa;
+import com.blinky.istesa.Layout.Form.FormMatkul;
+import com.blinky.istesa.Layout.Form.FormProdi;
+import com.blinky.istesa.Layout.Form.FormStatusAbsensi;
+import com.blinky.istesa.Layout.Form.FormWarek;
+import com.blinky.istesa.Layout.Table.Table;
+import com.blinky.istesa.Layout.Table.TableAbsensi;
+import com.blinky.istesa.Layout.Table.TableDosen;
+import com.blinky.istesa.Layout.Table.TableJadwal;
+import com.blinky.istesa.Layout.Table.TableKaprodi;
+import com.blinky.istesa.Layout.Table.TableKelas;
+import com.blinky.istesa.Layout.Table.TableMahasiswa;
+import com.blinky.istesa.Layout.Table.TableMatkul;
+import com.blinky.istesa.Layout.Table.TableProdi;
+import com.blinky.istesa.Layout.Table.TableStatusAbsensi;
+import com.blinky.istesa.Layout.Table.TableWarek;
+import com.blinky.istesa.Model.Admin;
+import com.blinky.istesa.Model.Dosen;
+import com.blinky.istesa.Model.Mahasiswa;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,7 +36,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-// import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -37,14 +46,14 @@ import javafx.scene.layout.VBox;
 @SuppressWarnings("exports")
 public class Home {
     private final BorderPane rootPane;
-    private String jenisTabel = "Mahasiswa";
+    private String jenisTabel = "TableMahasiswa";
     private String userType;
 
     private Account acc;
 
-    private Admin userAdmin;
-    private Mahasiswa userMhswa;
-    private Dosen userDosen;
+    public Admin userAdmin;
+    public Mahasiswa userMhswa;
+    public Dosen userDosen;
     private TableRoute[] listTable;
 
     public Home(Account account){
@@ -68,22 +77,22 @@ public class Home {
             userAdmin = acc.getAdminData();
             listTable = new TableRoute[]
             {
-                new TableRoute("Mahasiswa", new TableMahasiswa().getPane(), new Button("Data Mahasiswa")),
-                new TableRoute("Dosen", new TableDosen().getPane(), new Button("Data Dosen")),
-                new TableRoute("Kaprodi", new TableKaprodi().getPane(), new Button("Data Kaprodi")),
-                new TableRoute("Warek", new TableWarek().getPane(), new Button("Data Warek")),
-                new TableRoute("Prodi", new TableProdi().getPane(), new Button("Data Prodi")),
-                new TableRoute("Kelas", new TableKelas().getPane(), new Button("Data Kelas")),
-                new TableRoute("Matkul", new TableMatkul().getPane(), new Button("Data Matkul")),
-                new TableRoute("StatusAbsensi", new TableStatusAbsensi().getPane(), new Button("Data Status Absensi")),
-                new TableRoute("Jadwal", new TableJadwal().getPane(), new Button("Data Jadwal")),
+                new TableRoute("TableMahasiswa", new TableMahasiswa(), new Button("Data Mahasiswa")),
+                new TableRoute("TableDosen", new TableDosen(), new Button("Data Dosen")),
+                new TableRoute("TableKaprodi", new TableKaprodi(), new Button("Data Kaprodi")),
+                new TableRoute("TableWarek", new TableWarek(), new Button("Data Warek")),
+                new TableRoute("TableProdi", new TableProdi(), new Button("Data Prodi")),
+                new TableRoute("TableKelas", new TableKelas(), new Button("Data Kelas")),
+                new TableRoute("TableMatkul", new TableMatkul(), new Button("Data Matkul")),
+                new TableRoute("TableStatusAbsensi", new TableStatusAbsensi(), new Button("Data Status Absensi")),
+                new TableRoute("TableJadwal", new TableJadwal(), new Button("Data Jadwal")),
             };
         }
         else if(userType.equals("Dosen")){
             userDosen = acc.getDosenData();
             listTable = new TableRoute[]
             {
-                new TableRoute("Absensi", new TableAbsensi(userDosen.getIdDosen(), "dosen").getPane(), new Button("Absensi")),
+                new TableRoute("TableAbsensi", new TableAbsensi(userDosen.getIdDosen(), "dosen"), new Button("Absensi")),
                 // "Dosen", "Kelas", "Matkul", "Prodi", "Warek", "Kaprodi", "StatusAbsensi"
             };
         }
@@ -91,7 +100,7 @@ public class Home {
             userMhswa = acc.getMhswaData();
             listTable = new TableRoute[]
             {
-                new TableRoute("Absensi", new TableAbsensi(userMhswa.getIdMahasiswa(), "mhswa").getPane(), new Button("Histori Absensi")),
+                new TableRoute("TableAbsensi", new TableAbsensi(userMhswa.getIdMahasiswa(), "mhswa"), new Button("Histori Absensi")),
                 // "Dosen", "Kelas", "Matkul", "Prodi", "Warek", "Kaprodi", "StatusAbsensi"
             };
         }
@@ -193,7 +202,8 @@ public class Home {
         paneList.add(navbarPane());
         for(int i = 0; i < listTable.length; i++){
             if(listTable[i].routeName == jenisTabel){
-                paneList.add(listTable[i].table);
+                Table obj = (Table) listTable[i].table;
+                paneList.add(obj.rootPane);
             }
         }
         
@@ -223,13 +233,162 @@ public class Home {
         buttonPane.getChildren().addAll(btn_tambah, btn_edit, btn_hapus, btn_refresh);
         buttonPane.getStyleClass().addAll(new String[]{"bg-white", "rounded"});
 
+        btn_tambah.setOnAction(e -> {
+            for(int i = 0; i < listTable.length; i++){
+                if(listTable[i].routeName == jenisTabel){
+                    try{
+                        if(jenisTabel.equals("TableMatkul")){
+                            new FormMatkul(App.getStage(), this, "create");
+                        }
+                        else if (jenisTabel.equals("TableAbsensi")) {
+                            // Handle TableAbsensi
+                        }
+                        else if (jenisTabel.equals("TableDosen")) {
+                            new FormDosen(App.getStage(), this, "create");
+                        }
+                        else if (jenisTabel.equals("TableJadwal")) {
+                            new FormJadwal(App.getStage(), this, "create");
+                        }
+                        else if (jenisTabel.equals("TableKaprodi")) {
+                            new FormKaprodi(App.getStage(), this, "create");
+                        }
+                        else if (jenisTabel.equals("TableKelas")) {
+                            new FormKelas(App.getStage(), this, "create");
+                        }
+                        else if (jenisTabel.equals("TableMahasiswa")) {
+                            new FormMahasiswa(App.getStage(), this, "create");
+                        }
+                        else if (jenisTabel.equals("TableProdi")) {
+                            new FormProdi(App.getStage(), this, "create");
+                        }
+                        else if (jenisTabel.equals("TableStatusAbsensi")) {
+                            new FormStatusAbsensi(App.getStage(), this, "create");
+                        }
+                        else if (jenisTabel.equals("TableWarek")) {
+                            new FormWarek(App.getStage(), this, "create");
+                        }
+                    }
+                    catch(Exception er){
+                        er.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        btn_edit.setOnAction(e -> {
+            for(int i = 0; i < listTable.length; i++){
+                if(listTable[i].routeName == jenisTabel){
+                    try{
+                        if(jenisTabel.equals("TableMatkul")){
+                            TableMatkul tableMatkul = (TableMatkul) listTable[i].table;
+                            new FormMatkul(App.getStage(), this, "edit", tableMatkul.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableAbsensi")) {
+                            TableAbsensi tableAbsensi = (TableAbsensi) listTable[i].table;
+                        }
+                        else if (jenisTabel.equals("TableDosen")) {
+                            TableDosen tableDosen = (TableDosen) listTable[i].table;
+                            new FormDosen(App.getStage(), this, "edit", tableDosen.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableJadwal")) {
+                            TableJadwal tableJadwal = (TableJadwal) listTable[i].table;
+                            new FormJadwal(App.getStage(), this, "edit", tableJadwal.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableKaprodi")) {
+                            TableKaprodi tableKaprodi = (TableKaprodi) listTable[i].table;
+                            new FormKaprodi(App.getStage(), this, "edit", tableKaprodi.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableKelas")) {
+                            TableKelas tableKelas = (TableKelas) listTable[i].table;
+                            new FormKelas(App.getStage(), this, "edit", tableKelas.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableMahasiswa")) {
+                            TableMahasiswa tableMahasiswa = (TableMahasiswa) listTable[i].table;
+                            new FormMahasiswa(App.getStage(), this, "edit", tableMahasiswa.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableProdi")) {
+                            TableProdi tableProdi = (TableProdi) listTable[i].table;
+                            new FormProdi(App.getStage(), this, "edit", tableProdi.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableStatusAbsensi")) {
+                            TableStatusAbsensi tableStatusAbsensi = (TableStatusAbsensi) listTable[i].table;
+                            new FormStatusAbsensi(App.getStage(), this, "edit", tableStatusAbsensi.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableWarek")) {
+                            TableWarek tableWarek = (TableWarek) listTable[i].table;
+                            new FormWarek(App.getStage(), this, "edit", tableWarek.getSelectedData());
+                        }
+                    }
+                    catch(Exception er){
+                        er.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        btn_hapus.setOnAction(e -> {
+            for(int i = 0; i < listTable.length; i++){
+                if(listTable[i].routeName == jenisTabel){
+                    try{
+                        if(jenisTabel.equals("TableMatkul")){
+                            TableMatkul tableMatkul = (TableMatkul) listTable[i].table;
+                            new FormMatkul(App.getStage(), this, "delete", tableMatkul.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableAbsensi")) {
+                            TableAbsensi tableAbsensi = (TableAbsensi) listTable[i].table;
+                            // Handle TableAbsensi
+                        }
+                        else if (jenisTabel.equals("TableDosen")) {
+                            TableDosen tableDosen = (TableDosen) listTable[i].table;
+                            new FormDosen(App.getStage(), this, "delete", tableDosen.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableJadwal")) {
+                            TableJadwal tableJadwal = (TableJadwal) listTable[i].table;
+                            new FormJadwal(App.getStage(), this, "delete", tableJadwal.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableKaprodi")) {
+                            TableKaprodi tableKaprodi = (TableKaprodi) listTable[i].table;
+                            new FormKaprodi(App.getStage(), this, "delete", tableKaprodi.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableKelas")) {
+                            TableKelas tableKelas = (TableKelas) listTable[i].table;
+                            new FormKelas(App.getStage(), this, "delete", tableKelas.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableMahasiswa")) {
+                            TableMahasiswa tableMahasiswa = (TableMahasiswa) listTable[i].table;
+                            new FormMahasiswa(App.getStage(), this, "delete", tableMahasiswa.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableProdi")) {
+                            TableProdi tableProdi = (TableProdi) listTable[i].table;
+                            new FormProdi(App.getStage(), this, "delete", tableProdi.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableStatusAbsensi")) {
+                            TableStatusAbsensi tableStatusAbsensi = (TableStatusAbsensi) listTable[i].table;
+                            new FormStatusAbsensi(App.getStage(), this, "delete", tableStatusAbsensi.getSelectedData());
+                        }
+                        else if (jenisTabel.equals("TableWarek")) {
+                            TableWarek tableWarek = (TableWarek) listTable[i].table;
+                            new FormWarek(App.getStage(), this, "delete", tableWarek.getSelectedData());
+                        }
+                    }
+                    catch(Exception er){
+                        er.printStackTrace();
+                    }
+                }
+            }
+        });
+
         btn_refresh.setOnAction(e -> {
-            initTable();
-            rootPane.setCenter(null);
-            rootPane.setCenter(bodyPane());
+            refreshTable();
         });
 
         return buttonPane;
+    }
+
+    public void refreshTable(){
+        initTable();
+        rootPane.setCenter(null);
+        rootPane.setCenter(bodyPane());
     }
 
     public Pane getRootPane(){

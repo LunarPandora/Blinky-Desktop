@@ -1,0 +1,71 @@
+.root{
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-primary: "#5A4FDF";
+    -fx-blue: "#4E9FFF";
+    -fx-red: "#DE6262";
+    -fx-yellow: "#FCCB4E";
+    -fx-green: "#1B8C3C";
+    -fx-font-family: "Figtree";
+    -fx-font-size: 15px;
+}
+
+.btn{
+    -fx-padding: 10px 30px;
+    -fx-font-size: 16px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-font-family: "Figtree SemiBold";
+}
+
+.btn-primary{
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: "white";
+}
+
+.btn-alternate{
+    -fx-background-color: "white";
+    -fx-text-fill: -fx-primary;
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2px;
+}
+
+.rounded{
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+
+.bg-primary{
+    -fx-background-color: -fx-primary;
+}
+
+.bg-white{
+    -fx-background-color: "white";
+}
+
+.title{
+    -fx-fill: -fx-primary;
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 35px;
+    -fx-padding: 20px;
+}
+
+.border-table{
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2px;
+}
+
+.subtitle{
+    -fx-font-family: "Figtree Medium";
+    -fx-font-size: 18px;
+    -fx-padding: 20px;
+}
+
+.input, .input:focused{
+    -fx-border-color: -fx-primary;
+    -fx-border-radius: 10px;
+    -fx-border-width: 2px;
+    -fx-focus-color: none;
+    -fx-text-box-border: transparent;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+    -fx-background-color: white, white, white, white;
+}

@@ -53,4 +53,24 @@ public class DB {
 
         return result;
     }
+
+    public Boolean runSql(String sql){
+        try{
+            Class.forName(JDBC_DRIVER);
+            con = DriverManager.getConnection(DB_URL, USER, PASS);
+            
+            stmt = con.createStatement();
+            Boolean res = !stmt.execute(sql);
+
+            stmt.close();
+            con.close();
+
+            return res;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+
+            return false;
+        }
+    }
 }
