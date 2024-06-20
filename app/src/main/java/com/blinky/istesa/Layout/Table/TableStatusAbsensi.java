@@ -42,21 +42,11 @@ public class TableStatusAbsensi extends Table{
         List<Node> paneList = new ArrayList<Node>();
         
         Label namaTabel = new Label("Data Status Absensi");
-        TextField searchBar = new TextField();
-        ComboBox<String> jenis = new ComboBox<String>();
         
-        jenis.getItems().addAll(
-            "Contoh1",
-            "Contoh2",
-            "Contoh3"
-        );
-
         paneList.add(namaTabel);
-        paneList.add(searchBar);
-        paneList.add(jenis);
 
         filterPane.setSpacing(20);
-        filterPane.setAlignment(Pos.CENTER);
+        filterPane.setAlignment(Pos.CENTER_LEFT);
         filterPane.setPadding(new Insets(0, 0, 20, 0));
         namaTabel.getStyleClass().addAll(new String[]{"table-title"});
 
@@ -86,6 +76,11 @@ public class TableStatusAbsensi extends Table{
         col_insert.setCellValueFactory(v -> v.getValue().tglDitambahProperty());
         col_update.setCellValueFactory(v -> v.getValue().tglDiupdateProperty());
 
+        col_id.prefWidthProperty().bind(tb.widthProperty().multiply(0.1));
+        col_nama.prefWidthProperty().bind(tb.widthProperty().multiply(0.5));
+        col_insert.prefWidthProperty().bind(tb.widthProperty().multiply(0.2));
+        col_update.prefWidthProperty().bind(tb.widthProperty().multiply(0.2));
+
         ArrayList<TableColumn<StatusAbsensi, String>> col = new ArrayList<>();
         col.add(col_id);
         col.add(col_nama);
@@ -93,7 +88,6 @@ public class TableStatusAbsensi extends Table{
         col.add(col_update);
 
         for(int i = 0; i < col.size(); i++){
-            col.get(i).prefWidthProperty().bind(tb.widthProperty().divide(col.size()));
             tb.getColumns().add(col.get(i));
         }
 

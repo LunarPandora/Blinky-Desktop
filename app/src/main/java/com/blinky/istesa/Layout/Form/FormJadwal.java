@@ -62,7 +62,7 @@ public class FormJadwal{
         new Input("jamSelesai", new Label("Jam Selesai"), new TimePicker(), 2, "Pilih selesai").setType("TimePicker"),
     };
 
-    private static String[] listHari = new String[]{"Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"};
+    private static String[] listHari = new String[]{"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"};
     private static List<Input> readyInput = new ArrayList<Input>();
 
     public FormJadwal(Stage rStage, Home h, String type){
@@ -202,6 +202,11 @@ public class FormJadwal{
             jadwal.setJamMulai(getInputValue("jamMulai"));
             jadwal.setJamSelesai(getInputValue("jamSelesai"));
             jadwal.setHari(getInputValue("hari"));
+            for(int x = 0; x < listHari.length; x++){
+                if(x == readyInput.get(3).getComboBox().getSelectionModel().getSelectedIndex()){
+                    jadwal.setHari(String.valueOf(x));
+                }
+            }
 
             if(jadwal.create()){
                 border.setCenter(null);
@@ -334,7 +339,11 @@ public class FormJadwal{
 
             data.setJamMulai(getInputValue("jamMulai"));
             data.setJamSelesai(getInputValue("jamSelesai"));
-            data.setHari(getInputValue("hari"));
+            for(int x = 0; x < listHari.length; x++){
+                if(x == readyInput.get(3).getComboBox().getSelectionModel().getSelectedIndex()){
+                    data.setHari(String.valueOf(x));
+                }
+            }
 
             if(data.update()){
                 border.setCenter(null);

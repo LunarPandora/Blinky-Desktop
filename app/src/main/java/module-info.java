@@ -4,7 +4,7 @@ module com.blinky.istesa {
     requires java.sql;
     requires java.desktop;
     requires com.fazecast.jSerialComm;
-requires jbcrypt;
+    requires jbcrypt;
 
     opens com.blinky.istesa to javafx.fxml;
     exports com.blinky.istesa;

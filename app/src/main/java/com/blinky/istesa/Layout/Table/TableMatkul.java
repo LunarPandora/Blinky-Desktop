@@ -26,12 +26,21 @@ import javafx.scene.layout.VBox;
 public class TableMatkul extends Table{    
     private Matkul selectedData;
 
-    private List<Matkul> listMatkul;
+    private List<Matkul> listMatkul = new ArrayList<Matkul>();
     private TableView<Matkul> tb = new TableView<Matkul>();
+
+    TextField searchBar = new TextField();
 
     public TableMatkul(){
         rootPane = new BorderPane();
         tb.setColumnResizePolicy((param) -> true);
+
+        searchBar.setPromptText("Cari mata kuliah...");
+        searchBar.setOnKeyTyped(e -> {
+            rootPane.setCenter(null);
+            rootPane.setCenter(getTable());
+        });
+
 
         rootPane.setTop(filterPane());
         rootPane.setCenter(getTable());
@@ -42,18 +51,9 @@ public class TableMatkul extends Table{
         List<Node> paneList = new ArrayList<Node>();
         
         Label namaTabel = new Label("Data Matkul");
-        TextField searchBar = new TextField();
-        ComboBox<String> jenis = new ComboBox<String>();
-        
-        jenis.getItems().addAll(
-            "Contoh1",
-            "Contoh2",
-            "Contoh3"
-        );
 
         paneList.add(namaTabel);
         paneList.add(searchBar);
-        paneList.add(jenis);
 
         filterPane.setSpacing(20);
         filterPane.setAlignment(Pos.CENTER);
@@ -86,6 +86,11 @@ public class TableMatkul extends Table{
         col_insert.setCellValueFactory(v -> v.getValue().tglDitambahProperty());
         col_update.setCellValueFactory(v -> v.getValue().tglDiupdateProperty());
 
+        col_id.prefWidthProperty().bind(tb.widthProperty().multiply(0.1));
+        col_nama.prefWidthProperty().bind(tb.widthProperty().multiply(0.5));
+        col_insert.prefWidthProperty().bind(tb.widthProperty().multiply(0.2));
+        col_update.prefWidthProperty().bind(tb.widthProperty().multiply(0.2));
+
         ArrayList<TableColumn<Matkul, String>> col = new ArrayList<>();
         col.add(col_id);
         col.add(col_nama);
@@ -93,7 +98,6 @@ public class TableMatkul extends Table{
         col.add(col_update);
 
         for(int i = 0; i < col.size(); i++){
-            col.get(i).prefWidthProperty().bind(tb.widthProperty().divide(col.size()));
             tb.getColumns().add(col.get(i));
         }
 
@@ -114,19 +118,20 @@ public class TableMatkul extends Table{
 
     public HBox getTable(){
         HBox table = new HBox();
-        TableView<Matkul> tb = createTable();
+        
+        tb.getItems().clear();
+        tb.getColumns().clear();
 
-        // table.prefWidthProperty().bind(rootPane.widthProperty());
+        tb = createTable();
+
         HBox.setHgrow(table, Priority.ALWAYS);
         HBox.setHgrow(tb, Priority.ALWAYS);
         VBox.setVgrow(tb, Priority.ALWAYS);
 
-        List<Matkul> list_matkul = getData();
-        // SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy, hh:mm");   
+        getData();
 
-        for(int y = 0; y < list_matkul.size(); y++){
-            tb.getItems().add(list_matkul.get(y));
-            // System.out.println(list_mhswa.get(y).tgl_ditambah);        
+        for(int y = 0; y < listMatkul.size(); y++){
+            tb.getItems().add(listMatkul.get(y));
         }
 
         table.getChildren().add(tb);
@@ -134,20 +139,27 @@ public class TableMatkul extends Table{
         return table;
     }
 
-    public List<Matkul> getData(){
+    public void getData(){
         DB db = new DB();
+        List<String> query_builder = new ArrayList<String>();
 
-        List<Object> rs = db.runQuery("SELECT * FROM tb_matkul");
-        listMatkul = new ArrayList<Matkul>();
+        if(searchBar.textProperty().getValue() != null && searchBar.textProperty().getValue() != ""){
+            query_builder.add("nm_matkul LIKE '%" + searchBar.textProperty().getValue() + "%'");
+        }
+
+        String query_matkul = "SELECT * FROM tb_matkul";
+        if(query_builder.size() != 0){
+            query_matkul += " WHERE " + String.join(" AND ", query_builder);
+        }
+
+        List<Object> rs = db.runQuery(query_matkul);
+        listMatkul.clear();
 
         for(int i = 0; i < rs.size(); i++){
-            // System.out.println(rs.get(i));
             Matkul matkul = new Matkul(rs.get(i));
 
             listMatkul.add(matkul);
         }
-        
-        return listMatkul;
     }
 
     public void setSelectedData(Matkul sd){

@@ -12,7 +12,6 @@ public class Admin {
     private final StringProperty nmAdmin = new SimpleStringProperty();
     private final StringProperty uAdmin = new SimpleStringProperty();
     private final StringProperty pwAdmin = new SimpleStringProperty();
-    private final StringProperty fotoAdmin = new SimpleStringProperty();
     private final StringProperty tglDitambah = new SimpleStringProperty();
     private final StringProperty tglDiupdate = new SimpleStringProperty();
 
@@ -23,9 +22,8 @@ public class Admin {
         nmAdmin.set(list.get(1).toString());
         uAdmin.set(list.get(2).toString());
         pwAdmin.set(list.get(3).toString());
-        fotoAdmin.set(list.get(4).toString());
-        tglDitambah.set(list.get(5).toString());
-        tglDiupdate.set(list.get(6).toString());
+        tglDitambah.set(list.get(4).toString());
+        tglDiupdate.set(list.get(5).toString());
     }
 
     public StringProperty idAdminProperty() {
@@ -75,19 +73,6 @@ public class Admin {
     public void setPwAdmin(String pwAdmin) {
         this.pwAdmin.set(pwAdmin);
     }
-
-    public StringProperty fotoAdminProperty() {
-        return fotoAdmin;
-    }
-
-    public String getFotoAdmin() {
-        return fotoAdmin.get();
-    }
-
-    public void setFotoAdmin(String fotoAdmin) {
-        this.fotoAdmin.set(fotoAdmin);
-    }
-
     public StringProperty tglDitambahProperty() {
         return tglDitambah;
     }

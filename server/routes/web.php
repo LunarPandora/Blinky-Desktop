@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\MahasiswaController;
 
 
 /*
@@ -15,4 +16,10 @@ use App\Http\Controllers\AbsensiController;
 |
 */
 
+Route::get('/test', function(){
+    return "Connected.";
+});
+
 Route::get('/addrecord', [AbsensiController::class, 'addRecord']);
+Route::get('/checkmode', [MahasiswaController::class, 'check_machine']);
+Route::get('/registercard', [MahasiswaController::class, 'register_card']);

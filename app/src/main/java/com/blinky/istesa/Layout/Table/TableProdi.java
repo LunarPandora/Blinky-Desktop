@@ -26,12 +26,20 @@ import javafx.scene.layout.VBox;
 public class TableProdi extends Table{
     private Prodi selectedData;
 
-    private List<Prodi> listProdi;
+    private List<Prodi> listProdi = new ArrayList<Prodi>();
     private TableView<Prodi> tb = new TableView<Prodi>();
+
+    TextField searchBar = new TextField();
 
     public TableProdi(){
         rootPane = new BorderPane();
         tb.setColumnResizePolicy((param) -> true);
+
+        searchBar.setPromptText("Cari prodi...");
+        searchBar.setOnKeyTyped(e -> {
+            rootPane.setCenter(null);
+            rootPane.setCenter(getTable());
+        });
 
         rootPane.setTop(filterPane());
         rootPane.setCenter(getTable());
@@ -42,18 +50,9 @@ public class TableProdi extends Table{
         List<Node> paneList = new ArrayList<Node>();
         
         Label namaTabel = new Label("Data Prodi");
-        TextField searchBar = new TextField();
-        ComboBox<String> jenis = new ComboBox<String>();
-        
-        jenis.getItems().addAll(
-            "Contoh1",
-            "Contoh2",
-            "Contoh3"
-        );
 
         paneList.add(namaTabel);
         paneList.add(searchBar);
-        paneList.add(jenis);
 
         filterPane.setSpacing(20);
         filterPane.setAlignment(Pos.CENTER);
@@ -86,6 +85,11 @@ public class TableProdi extends Table{
         col_insert.setCellValueFactory(v -> v.getValue().tglDitambahProperty());
         col_update.setCellValueFactory(v -> v.getValue().tglDiupdateProperty());
 
+        col_id.prefWidthProperty().bind(tb.widthProperty().multiply(0.1));
+        col_nama.prefWidthProperty().bind(tb.widthProperty().multiply(0.5));
+        col_insert.prefWidthProperty().bind(tb.widthProperty().multiply(0.2));
+        col_update.prefWidthProperty().bind(tb.widthProperty().multiply(0.2));
+
         ArrayList<TableColumn<Prodi, String>> col = new ArrayList<>();
         col.add(col_id);
         col.add(col_nama);
@@ -93,7 +97,6 @@ public class TableProdi extends Table{
         col.add(col_update);
 
         for(int i = 0; i < col.size(); i++){
-            col.get(i).prefWidthProperty().bind(tb.widthProperty().divide(col.size()));
             tb.getColumns().add(col.get(i));
         }
 
@@ -114,19 +117,20 @@ public class TableProdi extends Table{
 
     public HBox getTable(){
         HBox table = new HBox();
-        TableView<Prodi> tb = createTable();
 
-        // table.prefWidthProperty().bind(rootPane.widthProperty());
+        tb.getItems().clear();
+        tb.getColumns().clear();
+
+        tb = createTable();
+
         HBox.setHgrow(table, Priority.ALWAYS);
         HBox.setHgrow(tb, Priority.ALWAYS);
         VBox.setVgrow(tb, Priority.ALWAYS);
 
-        List<Prodi> list_prodi = getData();
-        // SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy, hh:mm");   
+        getData();
 
-        for(int y = 0; y < list_prodi.size(); y++){
-            tb.getItems().add(list_prodi.get(y));
-            // System.out.println(list_mhswa.get(y).tgl_ditambah);        
+        for(int y = 0; y < listProdi.size(); y++){
+            tb.getItems().add(listProdi.get(y));
         }
 
         table.getChildren().add(tb);
@@ -134,20 +138,27 @@ public class TableProdi extends Table{
         return table;
     }
 
-    public List<Prodi> getData(){
+    public void getData(){
         DB db = new DB();
+        List<String> query_builder = new ArrayList<String>();
 
-        List<Object> rs = db.runQuery("SELECT * FROM tb_prodi");
-        listProdi = new ArrayList<Prodi>();
+        if(searchBar.textProperty().getValue() != null && searchBar.textProperty().getValue() != ""){
+            query_builder.add("nm_prodi LIKE '%" + searchBar.textProperty().getValue() + "%'");
+        }
+
+        String query_prodi = "SELECT * FROM tb_prodi";
+        if(query_builder.size() != 0){
+            query_prodi += " WHERE " + String.join(" AND ", query_builder);
+        }
+
+        List<Object> rs = db.runQuery(query_prodi);
+        listProdi.clear();
 
         for(int i = 0; i < rs.size(); i++){
-            // System.out.println(rs.get(i));
             Prodi prodi = new Prodi(rs.get(i));
 
             listProdi.add(prodi);
         }
-        
-        return listProdi;
     }
 
     public void setSelectedData(Prodi sd){

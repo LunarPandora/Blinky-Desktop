@@ -13,11 +13,12 @@ import javafx.beans.property.StringProperty;
 @SuppressWarnings("unchecked")
 public class Dosen {
     private final StringProperty idDosen = new SimpleStringProperty();
+    private final StringProperty idProdi = new SimpleStringProperty();
     private final StringProperty nmDosen = new SimpleStringProperty();
+    private final StringProperty nidn = new SimpleStringProperty();
+    private final StringProperty idJabatan = new SimpleStringProperty();
     private final StringProperty uDosen = new SimpleStringProperty();
     private final StringProperty pwDosen = new SimpleStringProperty();
-    private final StringProperty fotoDosen = new SimpleStringProperty();
-    private final StringProperty nidn = new SimpleStringProperty();
     private final StringProperty tglDitambah = new SimpleStringProperty();
     private final StringProperty tglDiupdate = new SimpleStringProperty();
 
@@ -29,17 +30,18 @@ public class Dosen {
         List<String> list = ((ArrayList<String>) obj);
 
         idDosen.set(list.get(0).toString());
-        nmDosen.set(list.get(1).toString());
-        uDosen.set(list.get(2).toString());
-        pwDosen.set(list.get(3).toString());
-        fotoDosen.set(list.get(4).toString());
-        nidn.set(list.get(5).toString());
-        tglDitambah.set(list.get(6).toString());
-        tglDiupdate.set(list.get(7).toString());
+        idProdi.set(list.get(1).toString());
+        nmDosen.set(list.get(2).toString());
+        nidn.set(list.get(3).toString());
+        idJabatan.set(list.get(4).toString());
+        uDosen.set(list.get(5).toString());
+        pwDosen.set(list.get(6).toString());
+        tglDitambah.set(list.get(7).toString());
+        tglDiupdate.set(list.get(8).toString());
     }
 
     public String getByID(int i){
-        StringProperty dosen[] = {idDosen, nmDosen, uDosen, pwDosen, fotoDosen, nidn, tglDitambah, tglDiupdate};
+        StringProperty dosen[] = {idDosen, idProdi, nmDosen, nidn, idJabatan, uDosen, pwDosen, tglDitambah, tglDiupdate};
         return dosen[i].get();
     }
 
@@ -55,6 +57,18 @@ public class Dosen {
         this.idDosen.set(idDosen);
     }
 
+    public StringProperty idProdiProperty() {
+        return idProdi;
+    }
+
+    public String getIdProdi() {
+        return idProdi.get();
+    }
+
+    public void setIdProdi(String idProdi) {
+        this.idProdi.set(idProdi);
+    }
+
     public StringProperty nmDosenProperty() {
         return nmDosen;
     }
@@ -65,6 +79,30 @@ public class Dosen {
 
     public void setNmDosen(String nmDosen) {
         this.nmDosen.set(nmDosen);
+    }
+
+    public StringProperty nidnProperty() {
+        return nidn;
+    }
+
+    public String getNidn() {
+        return nidn.get();
+    }
+
+    public void setNidn(String nidn) {
+        this.nidn.set(nidn);
+    }
+
+    public StringProperty idJabatanProperty() {
+        return idJabatan;
+    }
+
+    public String getIdJabatan() {
+        return idJabatan.get();
+    }
+
+    public void setIdJabatan(String idJabatan) {
+        this.idJabatan.set(idJabatan);
     }
 
     public StringProperty uDosenProperty() {
@@ -89,30 +127,6 @@ public class Dosen {
 
     public void setPwDosen(String pwDosen) {
         this.pwDosen.set(pwDosen);
-    }
-
-    public StringProperty fotoDosenProperty() {
-        return fotoDosen;
-    }
-
-    public String getFotoDosen() {
-        return fotoDosen.get();
-    }
-
-    public void setFotoDosen(String fotoDosen) {
-        this.fotoDosen.set(fotoDosen);
-    }
-
-    public StringProperty nidnProperty() {
-        return nidn;
-    }
-
-    public String getNidn() {
-        return nidn.get();
-    }
-
-    public void setNidn(String nidn) {
-        this.nidn.set(nidn);
     }
 
     public StringProperty tglDitambahProperty() {
@@ -143,10 +157,10 @@ public class Dosen {
         String pw = getPwDosen();
         String hash = BCrypt.hashpw(pw, BCrypt.gensalt());
 
-        String data[] = new String[]{getNmDosen(), getUDosen(), hash, "-", getNidn()};
+        String data[] = new String[]{getIdProdi(), getNmDosen(), getNidn(), getIdJabatan(), getUDosen(), getNmDosen(), hash};
         String queryVal = String.join("','", data);
 
-        String sql = "INSERT INTO tb_dosen (nm_dosen, u_dosen, pw_dosen, foto_dosen, nidn) VALUES ('" + queryVal + "')";
+        String sql = "INSERT INTO tb_dosen (id_prodi, nm_dosen, nidn, id_jabatan, u_dosen, nm_dosen, pw_dosen) VALUES ('" + queryVal + "')";
         DB db = new DB();
 
         return db.runSql(sql);
@@ -154,10 +168,12 @@ public class Dosen {
 
     public Boolean update(){
         String data[] = new String[]{
+            "id_prodi = '" + getIdProdi() + "'",
             "nm_dosen = '" + getNmDosen() + "'",
+            "nidn = '" + getNidn() + "'",
+            "id_jabatan = '" + getIdJabatan() + "'",
             "u_dosen = '" + getUDosen() + "'",
             "pw_dosen = '" + BCrypt.hashpw(getPwDosen(), BCrypt.gensalt()) + "'",
-            "nidn = '" + getNidn() + "'",
         };
         String queryVal = String.join(",", data);
 

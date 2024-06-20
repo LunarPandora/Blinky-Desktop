@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.blinky.istesa.DB;
+import com.blinky.istesa.Model.Kelas;
 import com.blinky.istesa.Model.Mahasiswa;
+import com.blinky.istesa.Model.Prodi;
 
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -26,12 +29,35 @@ import javafx.scene.layout.VBox;
 public class TableMahasiswa extends Table{
     private Mahasiswa selectedData;
 
-    private List<Mahasiswa> listMhswa;
+    private List<Mahasiswa> listMhswa = new ArrayList<Mahasiswa>();
     private TableView<Mahasiswa> tb = new TableView<Mahasiswa>();
+
+    private List<Kelas> listKelas = new ArrayList<Kelas>();
+    private List<Prodi> listProdi = new ArrayList<Prodi>(); 
+    
+    TextField searchBar = new TextField();
+    ComboBox<String> kelasChoiceBox = new ComboBox<String>();
+    ComboBox<String> prodiChoiceBox = new ComboBox<String>();
 
     public TableMahasiswa(){
         rootPane = new BorderPane();
         tb.setColumnResizePolicy((param) -> true);
+
+        searchBar.setPromptText("Cari mahasiswa...");
+        searchBar.setOnKeyTyped(e -> {
+            rootPane.setCenter(null);
+            rootPane.setCenter(getTable());
+        });
+        kelasChoiceBox.setOnAction(e -> {
+            rootPane.setCenter(null);
+            rootPane.setCenter(getTable());
+        });
+        prodiChoiceBox.setOnAction(e -> {
+            rootPane.setCenter(null);
+            rootPane.setCenter(getTable());
+        });
+
+        fetchData();
 
         rootPane.setTop(filterPane());
         rootPane.setCenter(getTable());
@@ -40,20 +66,16 @@ public class TableMahasiswa extends Table{
     public HBox filterPane(){
         HBox filterPane = new HBox();
         List<Node> paneList = new ArrayList<Node>();
+
+        HBox filterBoxPane = new HBox();
+        filterBoxPane.setSpacing(15);
+        filterBoxPane.getChildren().addAll(kelasChoiceBox, prodiChoiceBox);
         
         Label namaTabel = new Label("Data Mahasiswa");
-        TextField searchBar = new TextField();
-        ComboBox<String> jenis = new ComboBox<String>();
-        
-        jenis.getItems().addAll(
-            "Contoh1",
-            "Contoh2",
-            "Contoh3"
-        );
 
         paneList.add(namaTabel);
         paneList.add(searchBar);
-        paneList.add(jenis);
+        paneList.add(filterBoxPane);
 
         filterPane.setSpacing(20);
         filterPane.setAlignment(Pos.CENTER);
@@ -86,11 +108,19 @@ public class TableMahasiswa extends Table{
 
         col_nim.setCellValueFactory(v -> v.getValue().idMahasiswaProperty());
         col_nama.setCellValueFactory(v -> v.getValue().nmMahasiswaProperty());
-        col_kelas.setCellValueFactory(v -> v.getValue().idKelasProperty());
-        col_prodi.setCellValueFactory(v -> v.getValue().idProdiProperty());
+        col_kelas.setCellValueFactory(v -> getKelas(v.getValue().getIdKelas()).nmKelasProperty());
+        col_prodi.setCellValueFactory(v -> getProdi(v.getValue().getIdProdi()).nmProdiProperty());
         col_angkt.setCellValueFactory(v -> v.getValue().angkatanProperty());
         col_insert.setCellValueFactory(v -> v.getValue().tglDitambahProperty());
         col_update.setCellValueFactory(v -> v.getValue().tglDiupdateProperty());
+
+        col_nim.prefWidthProperty().bind(tb.widthProperty().multiply(0.07));
+        col_nama.prefWidthProperty().bind(tb.widthProperty().multiply(0.25));
+        col_kelas.prefWidthProperty().bind(tb.widthProperty().multiply(0.06));
+        col_prodi.prefWidthProperty().bind(tb.widthProperty().multiply(0.25));
+        col_angkt.prefWidthProperty().bind(tb.widthProperty().multiply(0.07));
+        col_insert.prefWidthProperty().bind(tb.widthProperty().multiply(0.15));
+        col_update.prefWidthProperty().bind(tb.widthProperty().multiply(0.15));
 
         ArrayList<TableColumn<Mahasiswa, String>> col = new ArrayList<>();
         col.add(col_nim);
@@ -102,7 +132,6 @@ public class TableMahasiswa extends Table{
         col.add(col_update);
 
         for(int i = 0; i < col.size(); i++){
-            col.get(i).prefWidthProperty().bind(tb.widthProperty().divide(col.size()));
             tb.getColumns().add(col.get(i));
         }
 
@@ -110,6 +139,7 @@ public class TableMahasiswa extends Table{
             TableRow<Mahasiswa> row = new TableRow<>();
             row.setOnMouseClicked(e -> {
                 if(!row.isEmpty()) {
+
                     Mahasiswa rowData = row.getItem();
                     setSelectedData(rowData);
                 }
@@ -123,19 +153,20 @@ public class TableMahasiswa extends Table{
 
     public HBox getTable(){
         HBox table = new HBox();
-        TableView<Mahasiswa> tb = createTable();
 
-        // table.prefWidthProperty().bind(rootPane.widthProperty());
+        tb.getItems().clear();
+        tb.getColumns().clear();
+
+        tb = createTable();
+
         HBox.setHgrow(table, Priority.ALWAYS);
         HBox.setHgrow(tb, Priority.ALWAYS);
         VBox.setVgrow(tb, Priority.ALWAYS);
 
-        List<Mahasiswa> list_mhswa = getData();
-        // SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy, hh:mm");   
+        getData();
 
-        for(int y = 0; y < list_mhswa.size(); y++){
-            tb.getItems().add(list_mhswa.get(y));
-            // System.out.println(list_mhswa.get(y).tgl_ditambah);        
+        for(int y = 0; y < listMhswa.size(); y++){
+            tb.getItems().add(listMhswa.get(y));
         }
 
         table.getChildren().add(tb);
@@ -143,21 +174,93 @@ public class TableMahasiswa extends Table{
         return table;
     }
 
-    public List<Mahasiswa> getData(){
+    public void getData(){
         DB db = new DB();
-        String query_admin = "SELECT id_mhswa, nm_kelas, nm_prodi, nm_mhswa, angkatan, m.tgl_ditambah, m.tgl_diupdate, foto_mhswa, id_admin, pw_mhswa, uid_rfid FROM tb_mahasiswa AS m INNER JOIN tb_kelas AS k ON m.id_kelas = k.id_kelas INNER JOIN tb_prodi AS p ON m.id_prodi = p.id_prodi;";
+        List<String> query_builder = new ArrayList<String>();
 
-        List<Object> rs = db.runQuery(query_admin);
-        listMhswa = new ArrayList<Mahasiswa>();
+        if(searchBar.textProperty().getValue() != null && searchBar.textProperty().getValue() != ""){
+            query_builder.add("nm_mahasiswa LIKE '%" + searchBar.textProperty().getValue() + "%'");
+        }
+        if(kelasChoiceBox.getValue() != "Semua kelas"){
+            for(Kelas k : listKelas){
+                if(k.getIdKelas().equals(kelasChoiceBox.getValue().split(" - ")[1])){
+                    query_builder.add("id_kelas = '" + k.getIdKelas() + "'");
+                }
+            }
+        }
+        if(prodiChoiceBox.getValue() != "Semua prodi"){
+            for(Prodi p : listProdi){
+                if(p.getIdProdi().equals(prodiChoiceBox.getValue().split(" - ")[1])){
+                    query_builder.add("id_prodi = '" + p.getIdProdi() + "'");
+                }
+            }
+        }
+
+        String query_mhswa = "SELECT * FROM tb_mahasiswa";
+        if(query_builder.size() != 0){
+            query_mhswa += " WHERE " + String.join(" AND ", query_builder);
+        }
+
+        List<Object> rs = db.runQuery(query_mhswa);
+        listMhswa.clear();
 
         for(int i = 0; i < rs.size(); i++){
-            // System.out.println(rs.get(i));
             Mahasiswa mhswa = new Mahasiswa(rs.get(i));
 
             listMhswa.add(mhswa);
         }
-        
-        return listMhswa;
+    }
+
+    private void fetchData(){
+        DB db = new DB();
+
+        listKelas.clear();
+        listProdi.clear();
+        kelasChoiceBox.getItems().clear();
+        prodiChoiceBox.getItems().clear();
+
+        kelasChoiceBox.getItems().add("Semua kelas");
+        prodiChoiceBox.getItems().add("Semua prodi");
+        kelasChoiceBox.setValue("Semua kelas");
+        prodiChoiceBox.setValue("Semua prodi");
+
+        String sql_kelas = "SELECT * FROM tb_kelas";
+        List<Object> rs_kelas = db.runQuery(sql_kelas);
+        for(Object obj : rs_kelas){
+            Kelas kelas = new Kelas(obj);
+            listKelas.add(kelas);
+
+            kelasChoiceBox.getItems().add(kelas.getNmKelas() + " - " + kelas.getIdKelas());
+        }
+
+        String sql_prodi = "SELECT * FROM tb_prodi";
+        List<Object> rs_prodi = db.runQuery(sql_prodi);
+        for(Object obj : rs_prodi){
+            Prodi prodi = new Prodi(obj);
+            listProdi.add(prodi);
+
+            prodiChoiceBox.getItems().add(prodi.getNmProdi() + " - " + prodi.getIdProdi());
+        }
+    }
+
+    private Kelas getKelas(String id){
+        for(Kelas k : listKelas){
+            if(k.getIdKelas().equals(id)){
+                return k;
+            }
+        }
+
+        return new Kelas();
+    }
+
+    private Prodi getProdi(String id){
+        for(Prodi p : listProdi){
+            if(p.getIdProdi().equals(id)){
+                return p;
+            }
+        }
+
+        return new Prodi();
     }
 
     public void setSelectedData(Mahasiswa sd){

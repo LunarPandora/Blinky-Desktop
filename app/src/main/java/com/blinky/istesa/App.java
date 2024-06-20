@@ -21,7 +21,6 @@ import javafx.stage.Stage;
 
 import com.blinky.istesa.Components.Account;
 import com.blinky.istesa.Components.Login;
-import com.blinky.istesa.Components.NodeMCUSocket;
 
 /**
  * JavaFX App
@@ -29,12 +28,12 @@ import com.blinky.istesa.Components.NodeMCUSocket;
 @SuppressWarnings("exports")
 public class App extends Application {
     private static Stage window;
-    // private static NodeMCUSocket nodemcu = new NodeMCUSocket();
 
     @Override
     public void start(Stage stage) throws Exception {
         window = stage;
         window.setTitle("Blinky");
+
         // scene = new Scene(loadFXML("primary"), 640, 480);
         // stage.setScene(scene);
         // stage.show();
@@ -55,13 +54,6 @@ public class App extends Application {
         stage.show();
         border.setPadding(new Insets(50, (stage.getWidth() / 2) - 250, 50, (stage.getWidth() / 2) - 250));
         // System.out.println();
-
-        // try{
-        //     nodemcu.listenToPort();
-        // }
-        // catch(Exception e){
-        //     e.printStackTrace();
-        // }
     }
 
     public GridPane addGridPane(){

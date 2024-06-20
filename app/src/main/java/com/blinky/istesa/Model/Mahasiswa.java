@@ -20,7 +20,6 @@ public class Mahasiswa {
     private final StringProperty angkatan = new SimpleStringProperty();
     private final StringProperty tglDitambah = new SimpleStringProperty();
     private final StringProperty tglDiupdate = new SimpleStringProperty();
-    private final StringProperty fotoMahasiswa = new SimpleStringProperty();
     private final StringProperty pwMahasiswa = new SimpleStringProperty();
     private final StringProperty uidRFID = new SimpleStringProperty();
 
@@ -34,18 +33,17 @@ public class Mahasiswa {
         idMahasiswa.set(list.get(0).toString());
         idKelas.set(list.get(1).toString());
         idProdi.set(list.get(2).toString());
-        nmMahasiswa.set(list.get(3).toString());
-        angkatan.set(list.get(4).toString());
-        tglDitambah.set(list.get(5).toString());
-        tglDiupdate.set(list.get(6).toString());
-        fotoMahasiswa.set(list.get(7).toString());
-        idAdmin.set(list.get(8).toString());
-        pwMahasiswa.set(list.get(9).toString());
-        uidRFID.set(list.get(10).toString());
+        idAdmin.set(list.get(3).toString());
+        nmMahasiswa.set(list.get(4).toString());
+        pwMahasiswa.set(list.get(5).toString());
+        angkatan.set(list.get(6).toString());
+        tglDitambah.set(list.get(7).toString());
+        tglDiupdate.set(list.get(8).toString());
+        uidRFID.set(list.get(9).toString());
     }
 
     public String getByID(int i){
-        StringProperty mahasiswa[] = {idMahasiswa, idKelas, idProdi, nmMahasiswa, angkatan, tglDitambah, tglDiupdate, fotoMahasiswa, idAdmin, pwMahasiswa, uidRFID};
+        StringProperty mahasiswa[] = {idMahasiswa, idKelas, idProdi, idAdmin, nmMahasiswa, pwMahasiswa, angkatan, tglDitambah, tglDiupdate, uidRFID};
         return mahasiswa[i].get();
     }
 
@@ -145,18 +143,6 @@ public class Mahasiswa {
         this.tglDiupdate.set(tglDiupdate);
     }
 
-    public StringProperty fotoMahasiswaProperty() {
-        return fotoMahasiswa;
-    }
-
-    public String getFotoMahasiswa() {
-        return fotoMahasiswa.get();
-    }
-
-    public void setFotoMahasiswa(String fotoMahasiswa) {
-        this.fotoMahasiswa.set(fotoMahasiswa);
-    }
-
     public StringProperty pwMahasiswaProperty() {
         return pwMahasiswa;
     }
@@ -185,10 +171,10 @@ public class Mahasiswa {
         String pw = getPwMahasiswa();
         String hash = BCrypt.hashpw(pw, BCrypt.gensalt());
 
-        String data[] = new String[]{getIdMahasiswa(), getIdKelas(), getIdProdi(), getNmMahasiswa(), getAngkatan(), "-", getIdAdmin(), hash, "-"};
+        String data[] = new String[]{getIdMahasiswa(), getIdKelas(), getIdProdi(), getIdAdmin(), getNmMahasiswa(), hash, getAngkatan(), "-"};
         String queryVal = String.join("','", data);
 
-        String sql = "INSERT INTO tb_mahasiswa (id_mhswa, id_kelas, id_prodi, nm_mhswa, angkatan, foto_mhswa, id_admin, pw_mhswa, uid_rfid) VALUES ('" + queryVal + "')";
+        String sql = "INSERT INTO tb_mahasiswa (id_mhswa, id_kelas, id_prodi, id_admin, nm_mahasiswa, pw_mahasiswa, angkatan, uid_rfid) VALUES ('" + queryVal + "')";
         DB db = new DB();
 
         return db.runSql(sql);
@@ -199,11 +185,11 @@ public class Mahasiswa {
             "id_mhswa = '" + getIdMahasiswa() + "'",
             "id_kelas = '" + getIdKelas() + "'",
             "id_prodi = '" + getIdProdi() + "'",
-            "nm_mhswa = '" + getNmMahasiswa() + "'",
+            "id_admin = '" + getIdAdmin() + "'",
+            "nm_mahasiswa = '" + getNmMahasiswa() + "'",
+            "pw_mahasiswa = '" + BCrypt.hashpw(getPwMahasiswa(), BCrypt.gensalt()) + "'",
             "angkatan = '" + getAngkatan() + "'",
-            "foto_mhswa = '-'",
-            "pw_mhswa = '" + BCrypt.hashpw(getPwMahasiswa(), BCrypt.gensalt()) + "'",
-            "uid_rfid = '-'",
+            "uid_rfid = '" + getUidRFID() + "'",
         };
         String queryVal = String.join(",", data);
 

@@ -6,8 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.blinky.istesa.DB;
+import com.blinky.istesa.Model.Dosen;
 import com.blinky.istesa.Model.Jadwal;
+import com.blinky.istesa.Model.Kelas;
+import com.blinky.istesa.Model.Matkul;
+import com.blinky.istesa.Model.Prodi;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -26,12 +32,45 @@ import javafx.scene.layout.VBox;
 public class TableJadwal extends Table{
     private Jadwal selectedData;
 
-    private List<Jadwal> listMhswa;
+    private List<Jadwal> listJadwal = new ArrayList<Jadwal>();
     private TableView<Jadwal> tb = new TableView<Jadwal>();
+
+    private List<Kelas> listKelas = new ArrayList<Kelas>();
+    private List<Dosen> listDosen = new ArrayList<Dosen>(); 
+    private List<Matkul> listMatkul = new ArrayList<Matkul>(); 
+    private String[] listHari = new String[]{"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"};
+
+    TextField searchBarMatkul = new TextField();
+    TextField searchBarDosen = new TextField();
+    ComboBox<String> kelasChoiceBox = new ComboBox<String>();
+    ComboBox<String> hariChoiceBox = new ComboBox<String>();
 
     public TableJadwal(){
         rootPane = new BorderPane();
         tb.setColumnResizePolicy((param) -> true);
+
+        searchBarMatkul.setPromptText("Cari mata kuliah...");
+        searchBarMatkul.setOnKeyTyped(e -> {
+            rootPane.setCenter(null);
+            rootPane.setCenter(getTable());
+        });
+
+        searchBarDosen.setPromptText("Cari dosen...");
+        searchBarDosen.setOnKeyTyped(e -> {
+            rootPane.setCenter(null);
+            rootPane.setCenter(getTable());
+        });
+
+        kelasChoiceBox.setOnAction(e -> {
+            rootPane.setCenter(null);
+            rootPane.setCenter(getTable());
+        });
+        hariChoiceBox.setOnAction(e -> {
+            rootPane.setCenter(null);
+            rootPane.setCenter(getTable());
+        });
+
+        fetchData();
 
         rootPane.setTop(filterPane());
         rootPane.setCenter(getTable());
@@ -42,18 +81,18 @@ public class TableJadwal extends Table{
         List<Node> paneList = new ArrayList<Node>();
         
         Label namaTabel = new Label("Data Jadwal");
-        TextField searchBar = new TextField();
-        ComboBox<String> jenis = new ComboBox<String>();
-        
-        jenis.getItems().addAll(
-            "Contoh1",
-            "Contoh2",
-            "Contoh3"
-        );
+
+        HBox searchBoxPane = new HBox();
+        searchBoxPane.setSpacing(15);
+        searchBoxPane.getChildren().addAll(searchBarDosen, searchBarMatkul);
+
+        HBox filterBoxPane = new HBox();
+        filterBoxPane.setSpacing(15);
+        filterBoxPane.getChildren().addAll(kelasChoiceBox, hariChoiceBox);
 
         paneList.add(namaTabel);
-        paneList.add(searchBar);
-        paneList.add(jenis);
+        paneList.add(searchBoxPane);
+        paneList.add(filterBoxPane);
 
         filterPane.setSpacing(20);
         filterPane.setAlignment(Pos.CENTER);
@@ -87,14 +126,24 @@ public class TableJadwal extends Table{
         TableColumn<Jadwal, String> col_update = new TableColumn<>("Terakhir kali diedit");
 
         col_id.setCellValueFactory(v -> v.getValue().idJadwalProperty());
-        col_matkul.setCellValueFactory(v -> v.getValue().idMatkulProperty());
-        col_dosen.setCellValueFactory(v -> v.getValue().idDosenProperty());
-        col_kelas.setCellValueFactory(v -> v.getValue().idKelasProperty());
+        col_matkul.setCellValueFactory(v -> getMatkul(v.getValue().getIdMatkul()).nmMatkulProperty());
+        col_dosen.setCellValueFactory(v -> getDosen(v.getValue().getIdDosen()).nmDosenProperty());
+        col_kelas.setCellValueFactory(v -> getKelas(v.getValue().getIdKelas()).nmKelasProperty());
         col_jamM.setCellValueFactory(v -> v.getValue().jamMulaiProperty());
         col_jamS.setCellValueFactory(v -> v.getValue().jamSelesaiProperty());
-        col_hari.setCellValueFactory(v -> v.getValue().hariProperty());
+        col_hari.setCellValueFactory(v -> getDay(v.getValue().getHari()));
         col_insert.setCellValueFactory(v -> v.getValue().tglDitambahProperty());
         col_update.setCellValueFactory(v -> v.getValue().tglDiupdateProperty());
+
+        col_id.prefWidthProperty().bind(tb.widthProperty().multiply(0.05));
+        col_matkul.prefWidthProperty().bind(tb.widthProperty().multiply(0.2));
+        col_dosen.prefWidthProperty().bind(tb.widthProperty().multiply(0.21));
+        col_kelas.prefWidthProperty().bind(tb.widthProperty().multiply(0.05));
+        col_jamM.prefWidthProperty().bind(tb.widthProperty().multiply(0.08));
+        col_jamS.prefWidthProperty().bind(tb.widthProperty().multiply(0.08));
+        col_hari.prefWidthProperty().bind(tb.widthProperty().multiply(0.06));
+        col_insert.prefWidthProperty().bind(tb.widthProperty().multiply(0.13));
+        col_update.prefWidthProperty().bind(tb.widthProperty().multiply(0.13));
 
         ArrayList<TableColumn<Jadwal, String>> col = new ArrayList<>();
         col.add(col_id);
@@ -108,7 +157,6 @@ public class TableJadwal extends Table{
         col.add(col_update);
 
         for(int i = 0; i < col.size(); i++){
-            col.get(i).prefWidthProperty().bind(tb.widthProperty().divide(col.size()));
             tb.getColumns().add(col.get(i));
         }
 
@@ -129,19 +177,20 @@ public class TableJadwal extends Table{
 
     public HBox getTable(){
         HBox table = new HBox();
-        TableView<Jadwal> tb = createTable();
 
-        // table.prefWidthProperty().bind(rootPane.widthProperty());
+        tb.getItems().clear();
+        tb.getColumns().clear();
+
+        tb = createTable();
+
         HBox.setHgrow(table, Priority.ALWAYS);
         HBox.setHgrow(tb, Priority.ALWAYS);
         VBox.setVgrow(tb, Priority.ALWAYS);
 
-        List<Jadwal> list_mhswa = getData();
-        // SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy, hh:mm");   
+        getData();
 
-        for(int y = 0; y < list_mhswa.size(); y++){
-            tb.getItems().add(list_mhswa.get(y));
-            // System.out.println(list_mhswa.get(y).tgl_ditambah);        
+        for(int y = 0; y < listJadwal.size(); y++){
+            tb.getItems().add(listJadwal.get(y));
         }
 
         table.getChildren().add(tb);
@@ -149,21 +198,128 @@ public class TableJadwal extends Table{
         return table;
     }
 
-    public List<Jadwal> getData(){
+    public void getData(){
         DB db = new DB();
-        String query = "SELECT id_jadwal, jam_mulai, jam_selesai, hari, nm_kelas, nm_dosen, nm_matkul, j.tgl_ditambah, j.tgl_diupdate FROM tb_jadwal AS j INNER JOIN tb_kelas AS k ON j.id_kelas = k.id_kelas INNER JOIN tb_dosen AS d ON j.id_dosen = d.id_dosen INNER JOIN tb_matkul AS m ON j.id_matkul = m.id_matkul ORDER BY j.id_jadwal ASC;";
+        List<String> query_builder = new ArrayList<String>();
 
-        List<Object> rs = db.runQuery(query);
-        listMhswa = new ArrayList<Jadwal>();
+        if(searchBarDosen.textProperty().getValue() != null && searchBarDosen.textProperty().getValue() != ""){
+            query_builder.add("d.nm_dosen LIKE '%" + searchBarDosen.textProperty().getValue() + "%'");
+        }
+        if(searchBarMatkul.textProperty().getValue() != null && searchBarMatkul.textProperty().getValue() != ""){
+            query_builder.add("m.nm_matkul LIKE '%" + searchBarMatkul.textProperty().getValue() + "%'");
+        }
+        if(kelasChoiceBox.getValue() != "Semua kelas"){
+            for(Kelas k : listKelas){
+                if(k.getIdKelas().equals(kelasChoiceBox.getValue().split(" - ")[1])){
+                    query_builder.add("id_kelas = '" + k.getIdKelas() + "'");
+                }
+            }
+        }
+        if(hariChoiceBox.getValue() != "Semua hari"){
+            for(int x = 0; x <= listHari.length; x++){
+                if(x == hariChoiceBox.getSelectionModel().getSelectedIndex()){
+                    query_builder.add("hari = '" + (x - 1) + "'");
+                }
+            }
+        }
+
+        String query_jadwal = "SELECT id_jadwal, jam_mulai, jam_selesai, hari, j.id_kelas, j.id_dosen, j.id_matkul, j.tgl_ditambah, j.tgl_diupdate FROM tb_jadwal as j INNER JOIN tb_dosen AS d ON j.id_dosen = d.id_dosen INNER JOIN tb_matkul AS m ON j.id_matkul = m.id_matkul";
+        if(query_builder.size() != 0){
+            query_jadwal += " WHERE " + String.join(" AND ", query_builder);
+        }
+
+        List<Object> rs = db.runQuery(query_jadwal);
+        listJadwal.clear();
 
         for(int i = 0; i < rs.size(); i++){
-            // System.out.println(rs.get(i));
             Jadwal mhswa = new Jadwal(rs.get(i));
 
-            listMhswa.add(mhswa);
+            listJadwal.add(mhswa);
         }
-        
-        return listMhswa;
+    }
+
+    private void fetchData(){
+        DB db = new DB();
+
+        listKelas.clear();
+        listMatkul.clear();
+        listDosen.clear();
+
+        kelasChoiceBox.getItems().clear();
+        hariChoiceBox.getItems().clear();
+
+        kelasChoiceBox.getItems().add("Semua kelas");
+        hariChoiceBox.getItems().add("Semua hari");
+
+        kelasChoiceBox.setValue("Semua kelas");
+        hariChoiceBox.setValue("Semua hari");
+
+        String sql_kelas = "SELECT * FROM tb_kelas";
+        List<Object> rs_kelas = db.runQuery(sql_kelas);
+        for(Object obj : rs_kelas){
+            Kelas kelas = new Kelas(obj);
+            listKelas.add(kelas);
+
+            kelasChoiceBox.getItems().add(kelas.getNmKelas() + " - " + kelas.getIdKelas());
+        }
+
+        String sql_dosen = "SELECT * FROM tb_dosen";
+        List<Object> rs_dosen = db.runQuery(sql_dosen);
+        for(Object obj : rs_dosen){
+            Dosen dosen = new Dosen(obj);
+            listDosen.add(dosen);
+        }
+
+        String sql_matkul = "SELECT * FROM tb_matkul";
+        List<Object> rs_matkul = db.runQuery(sql_matkul);
+        for(Object obj : rs_matkul){
+            Matkul matkul = new Matkul(obj);
+            listMatkul.add(matkul);
+        }
+
+        for(String hari : listHari){
+            hariChoiceBox.getItems().add(hari);
+        }
+    }
+
+    private Kelas getKelas(String id){
+        for(Kelas k : listKelas){
+            if(k.getIdKelas().equals(id)){
+                return k;
+            }
+        }
+
+        return new Kelas();
+    }
+
+    private Dosen getDosen(String id){
+        for(Dosen d : listDosen){
+            if(d.getIdDosen().equals(id)){
+                return d;
+            }
+        }
+
+        return new Dosen();
+    }
+
+    private Matkul getMatkul(String id){
+        for(Matkul m : listMatkul){
+            if(m.getIdMatkul().equals(id)){
+                return m;
+            }
+        }
+
+        return new Matkul();
+    }
+
+    private StringProperty getDay(String id){
+        for(int x = 0; x < listHari.length; x++){
+            if(x == Integer.parseInt(id)){
+                return new SimpleStringProperty(listHari[x]);
+            }
+        }
+
+        return new SimpleStringProperty("");
     }
 
     public void setSelectedData(Jadwal sd){

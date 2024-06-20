@@ -39,7 +39,7 @@ public class TableAbsensi extends Table{
         HBox filterPane = new HBox();
         List<Node> paneList = new ArrayList<Node>();
         
-        Label namaTabel = new Label("Data Absensi");
+        Label namaTabel = new Label("Data Absensi Kelas");
         TextField searchBar = new TextField();
         ComboBox<String> jenis = new ComboBox<String>();
         

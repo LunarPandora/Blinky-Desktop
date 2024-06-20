@@ -1,12 +1,12 @@
 package com.blinky.istesa.Layout.Table;
 
-// import java.text.DecimalFormat;
-// import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.blinky.istesa.DB;
+import com.blinky.istesa.Model.Jabatan;
 import com.blinky.istesa.Model.Kelas;
+import com.blinky.istesa.Model.Prodi;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,19 +23,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public class TableKelas extends Table{
-    private Kelas selectedData;
+public class TableJabatan extends Table {
+    private Jabatan selectedData;
 
-    private List<Kelas> listKelas = new ArrayList<Kelas>();
-    private TableView<Kelas> tb = new TableView<Kelas>();
+    private List<Jabatan> listJabatan = new ArrayList<Jabatan>();
+    private TableView<Jabatan> tb = new TableView<Jabatan>();
 
     TextField searchBar = new TextField();
 
-    public TableKelas(){
+    public TableJabatan(){
         rootPane = new BorderPane();
         tb.setColumnResizePolicy((param) -> true);
 
-        searchBar.setPromptText("Cari kelas...");
+        searchBar.setPromptText("Cari jabatan...");
         searchBar.setOnKeyTyped(e -> {
             rootPane.setCenter(null);
             rootPane.setCenter(getTable());
@@ -49,7 +49,7 @@ public class TableKelas extends Table{
         HBox filterPane = new HBox();
         List<Node> paneList = new ArrayList<Node>();
         
-        Label namaTabel = new Label("Data Kelas");
+        Label namaTabel = new Label("Data Jabatan");
 
         paneList.add(namaTabel);
         paneList.add(searchBar);
@@ -74,25 +74,25 @@ public class TableKelas extends Table{
         return filterPane;
     }
 
-    public TableView<Kelas> createTable(){
-        TableColumn<Kelas, String> col_id = new TableColumn<>("ID");
-        TableColumn<Kelas, String> col_nama = new TableColumn<>("Nama Kelas");
-        TableColumn<Kelas, String> col_insert = new TableColumn<>("Ditambahkan pada");
-        TableColumn<Kelas, String> col_update = new TableColumn<>("Terakhir kali diedit");
+    public TableView<Jabatan> createTable(){
+        TableColumn<Jabatan, String> col_id = new TableColumn<>("ID");
+        TableColumn<Jabatan, String> col_jabatan = new TableColumn<>("Jabatan");
+        TableColumn<Jabatan, String> col_insert = new TableColumn<>("Ditambahkan pada");
+        TableColumn<Jabatan, String> col_update = new TableColumn<>("Terakhir kali diedit");
 
-        col_id.setCellValueFactory(v -> v.getValue().idKelasProperty());
-        col_nama.setCellValueFactory(v -> v.getValue().nmKelasProperty());
+        col_id.setCellValueFactory(v -> v.getValue().idJabatanProperty());
+        col_jabatan.setCellValueFactory(v -> v.getValue().nmJabatanProperty());
         col_insert.setCellValueFactory(v -> v.getValue().tglDitambahProperty());
         col_update.setCellValueFactory(v -> v.getValue().tglDiupdateProperty());
 
         col_id.prefWidthProperty().bind(tb.widthProperty().multiply(0.1));
-        col_nama.prefWidthProperty().bind(tb.widthProperty().multiply(0.5));
+        col_jabatan.prefWidthProperty().bind(tb.widthProperty().multiply(0.5));
         col_insert.prefWidthProperty().bind(tb.widthProperty().multiply(0.2));
         col_update.prefWidthProperty().bind(tb.widthProperty().multiply(0.2));
 
-        ArrayList<TableColumn<Kelas, String>> col = new ArrayList<>();
+        ArrayList<TableColumn<Jabatan, String>> col = new ArrayList<>();
         col.add(col_id);
-        col.add(col_nama);
+        col.add(col_jabatan);
         col.add(col_insert);
         col.add(col_update);
 
@@ -101,10 +101,10 @@ public class TableKelas extends Table{
         }
 
         tb.setRowFactory(tv -> {
-            TableRow<Kelas> row = new TableRow<>();
+            TableRow<Jabatan> row = new TableRow<>();
             row.setOnMouseClicked(e -> {
                 if(!row.isEmpty()) {
-                    Kelas rowData = row.getItem();
+                    Jabatan rowData = row.getItem();
                     setSelectedData(rowData);
                 }
             });
@@ -117,7 +117,7 @@ public class TableKelas extends Table{
 
     public HBox getTable(){
         HBox table = new HBox();
-
+        
         tb.getItems().clear();
         tb.getColumns().clear();
 
@@ -129,8 +129,8 @@ public class TableKelas extends Table{
 
         getData();
 
-        for(int y = 0; y < listKelas.size(); y++){
-            tb.getItems().add(listKelas.get(y));
+        for(int y = 0; y < listJabatan.size(); y++){
+            tb.getItems().add(listJabatan.get(y));
         }
 
         table.getChildren().add(tb);
@@ -143,29 +143,29 @@ public class TableKelas extends Table{
         List<String> query_builder = new ArrayList<String>();
 
         if(searchBar.textProperty().getValue() != null && searchBar.textProperty().getValue() != ""){
-            query_builder.add("nm_kelas LIKE '%" + searchBar.textProperty().getValue() + "%'");
+            query_builder.add("nm_jabatan LIKE '%" + searchBar.textProperty().getValue() + "%'");
         }
 
-        String query_kelas = "SELECT * FROM tb_kelas";
+        String query_jabatan = "SELECT * FROM tb_jabatan";
         if(query_builder.size() != 0){
-            query_kelas += " WHERE " + String.join(" AND ", query_builder);
+            query_jabatan += " WHERE " + String.join(" AND ", query_builder);
         }
 
-        List<Object> rs = db.runQuery(query_kelas);
-        listKelas.clear();
+        List<Object> rs = db.runQuery(query_jabatan + " ORDER BY id_jabatan ASC;");
+        listJabatan.clear();
 
         for(int i = 0; i < rs.size(); i++){
-            Kelas kelas = new Kelas(rs.get(i));
+            Jabatan mhswa = new Jabatan(rs.get(i));
 
-            listKelas.add(kelas);
+            listJabatan.add(mhswa);
         }
     }
 
-    public void setSelectedData(Kelas sd){
+    public void setSelectedData(Jabatan sd){
         selectedData = sd;
     }
 
-    public Kelas getSelectedData(){
+    public Jabatan getSelectedData(){
         return selectedData;
     }
 

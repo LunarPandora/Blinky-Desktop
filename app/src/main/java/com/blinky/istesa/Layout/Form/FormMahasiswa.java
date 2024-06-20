@@ -15,27 +15,17 @@ import com.blinky.istesa.Model.Kelas;
 import com.blinky.istesa.Model.Matkul;
 import com.blinky.istesa.Model.Prodi;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -66,7 +56,7 @@ public class FormMahasiswa{
 
     private static List<Input> readyInput = new ArrayList<Input>();
 
-    public FormMahasiswa(Stage rStage, Home h, String type){
+    public FormMahasiswa(Stage rStage, Home h, String type) throws Exception {
         home = h;
 
         window = new Stage();
@@ -165,18 +155,94 @@ public class FormMahasiswa{
         return grid;
     }
 
-    public GridPane createFormAdd(){
+    public VBox addCard() throws Exception {
+        VBox grid = new VBox();
+        grid.setAlignment(Pos.CENTER_LEFT);
+        grid.setSpacing(30);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        Text formTitle = new Text("Sebelum itu...");
+        Text alertContent = new Text("Silahkan daftarkan sebuah kartu untuk menyelesaikan pendaftaran mahasiswa ini dengan\nmeng-scan kartu tersebut ke Blinky. Anda dapat melanjutkan setelah kartu telah terdeteksi.");
+
+        Button btnAcc = new Button("Kartu belum terdeteksi");
+        btnAcc.setDisable(true);
+        btnAcc.setPrefWidth(Double.MAX_VALUE);
+        btnAcc.setOnAction(e -> {
+            home.refreshTable();
+
+            window.close();
+        });
+
+        Button closeDialog = new Button("Kembali");
+        closeDialog.setPrefWidth(Double.MAX_VALUE);
+        closeDialog.setOnAction(e -> {
+            DB db = new DB();
+            db.runSql("UPDATE machine SET is_scanning = 0, last_rec_rfid = ''");
+            home.refreshTable();
+
+            window.close();
+        });
+
+        grid.getStyleClass().addAll(new String[]{"bg-white", "rounded"});
+        btnAcc.getStyleClass().addAll(new String[]{"btn", "btn-primary"});
+        closeDialog.getStyleClass().addAll(new String[]{"btn", "btn-alternate"});
+        formTitle.getStyleClass().addAll(new String[]{"title"});
+
+        VBox actionButtonPane = new VBox();
+        actionButtonPane.getChildren().addAll(btnAcc, closeDialog);
+        actionButtonPane.setSpacing(10);
+        // alertContent.
+
+        grid.getChildren().addAll(formTitle, alertContent, actionButtonPane);
+
+        try{
+            DB db = new DB();
+            Boolean scan = db.runSql("UPDATE machine SET is_scanning = 1");
+
+            if(scan){
+                new Thread(new Runnable(){
+                    public void run(){
+                        while(true){
+                            List<Object> rs = db.runQuery("SELECT * FROM machine");
+                            List<String> list = ((ArrayList<String>) rs.get(0));
+        
+                            System.out.println(list.get(1));
+        
+                            if(!list.get(1).toString().equals("")){
+                                data.setUidRFID(list.get(1).toString());
+                                data.update(data.getIdMahasiswa());
+        
+                                db.runSql("UPDATE machine SET is_scanning = 0, last_rec_rfid = ''");
+        
+                                btnAcc.setDisable(false);
+                                btnAcc.textProperty().setValue("Selesai");
+        
+                                break;
+                            }
+                        }
+                    }
+                }).start();
+            }
+            // LaravelSocket ls = new LaravelSocket();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return grid;
+    }
+
+    public GridPane createFormAdd() throws Exception {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER_LEFT);
         grid.setHgap(10);
         grid.setVgap(30);
-        grid.setPrefWidth(Double.MAX_VALUE);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         Text formTitle = new Text("Tambah Mahasiswa");
         
-        Button btnAcc = new Button("Tambahkan");
-        btnAcc.setPrefWidth(Double.MAX_VALUE);
+        Button btnAcc = new Button("Lanjut");
+        btnAcc.setMaxWidth(Double.MAX_VALUE);
         btnAcc.setOnAction(e -> {
             Mahasiswa mahasiswa = new Mahasiswa();
             mahasiswa.setIdMahasiswa(getInputValue("idMahasiswa"));
@@ -198,17 +264,24 @@ public class FormMahasiswa{
             }
 
             if(mahasiswa.create()){
+                data = mahasiswa;
+
                 border.setCenter(null);
-                border.setCenter(alertBox("Data berhasil ditambahkan!"));
+                try{
+                    border.setCenter(addCard());
+                }
+                catch(Exception x){
+                    x.printStackTrace();
+                }
             }
             else{
                 border.setCenter(null);
                 border.setCenter(alertBox("Data gagal ditambahkan!"));
             }
         });
-
+        
         Button closeDialog = new Button("Kembali");
-        closeDialog.setPrefWidth(Double.MAX_VALUE);
+        closeDialog.setMaxWidth(Double.MAX_VALUE);
         closeDialog.setOnAction(e -> {
             window.close();
         });
@@ -226,7 +299,6 @@ public class FormMahasiswa{
         for(Input input : formInputList){
             VBox span = new VBox();
             span.setSpacing(5);
-            span.setPrefWidth(grid.getWidth() / 2);
 
             // TextField txt = ;
             if(input.getType().equals("TextField")){
@@ -234,7 +306,7 @@ public class FormMahasiswa{
                 input.getTextField().setPromptText(input.getPlaceholder());
                 input.getTextField().getStyleClass().addAll(new String[]{"input"});
                 input.getTextField().setPadding(new Insets(10, 10, 10, 10));
-                input.getTextField().setPrefWidth(Double.MAX_VALUE);
+                input.getTextField().setPrefWidth(border.getWidth() / 2);
                 
                 span.getChildren().addAll(input.getLabel(), input.getTextField());
             }
@@ -255,7 +327,7 @@ public class FormMahasiswa{
                 input.getComboBox().setPromptText(input.getPlaceholder());
                 input.getComboBox().getStyleClass().addAll(new String[]{"input"});
                 input.getComboBox().setPadding(new Insets(10, 10, 10, 10));
-                input.getComboBox().setPrefWidth(Double.MAX_VALUE);
+                input.getComboBox().setPrefWidth(border.getWidth() / 2);
 
                 span.getChildren().addAll(input.getLabel(), input.getComboBox());
             }
@@ -269,6 +341,8 @@ public class FormMahasiswa{
                 y++;
                 x = 0;
             }
+
+            System.out.println(x + " " + y);
 
             grid.add(span, x, y);
             x++;
@@ -288,14 +362,15 @@ public class FormMahasiswa{
         grid.setAlignment(Pos.CENTER_LEFT);
         grid.setHgap(10);
         grid.setVgap(30);
-        grid.setPrefWidth(Double.MAX_VALUE);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         Text formTitle = new Text("Edit Mahasiswa");
         
         Button btnAcc = new Button("Perbarui");
-        btnAcc.setPrefWidth(Double.MAX_VALUE);
+        btnAcc.setMaxWidth(Double.MAX_VALUE);
         btnAcc.setOnAction(e -> {
+            data = new Mahasiswa();
+
             data.setIdMahasiswa(getInputValue("idMahasiswa"));
             data.setNmMahasiswa(getInputValue("nmMahasiswa"));
             data.setPwMahasiswa(getInputValue("pwMahasiswa"));
@@ -325,7 +400,7 @@ public class FormMahasiswa{
         });
 
         Button closeDialog = new Button("Kembali");
-        closeDialog.setPrefWidth(Double.MAX_VALUE);
+        closeDialog.setMaxWidth(Double.MAX_VALUE);
         closeDialog.setOnAction(e -> {
             window.close();
         });
@@ -343,7 +418,6 @@ public class FormMahasiswa{
         for(Input input : formInputList){
             VBox span = new VBox();
             span.setSpacing(5);
-            span.setPrefWidth(grid.getWidth() / 2);
 
             // TextField txt = ;
             if(input.getType().equals("TextField")){
@@ -351,7 +425,7 @@ public class FormMahasiswa{
                 input.getTextField().setPromptText(input.getPlaceholder());
                 input.getTextField().getStyleClass().addAll(new String[]{"input"});
                 input.getTextField().setPadding(new Insets(10, 10, 10, 10));
-                input.getTextField().setPrefWidth(Double.MAX_VALUE);
+                input.getTextField().setPrefWidth(border.getWidth() / 2);
 
                 if(input.getName().equals("idMahasiswa")){
                     nimLama = data.getByID(input.getIndex());
@@ -385,7 +459,7 @@ public class FormMahasiswa{
                 input.getComboBox().setPromptText(input.getPlaceholder());
                 input.getComboBox().getStyleClass().addAll(new String[]{"input"});
                 input.getComboBox().setPadding(new Insets(10, 10, 10, 10));
-                input.getComboBox().setPrefWidth(Double.MAX_VALUE);
+                input.getComboBox().setPrefWidth(border.getWidth() / 2);
 
                 span.getChildren().addAll(input.getLabel(), input.getComboBox());
             }

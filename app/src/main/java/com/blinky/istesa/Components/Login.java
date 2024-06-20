@@ -2,6 +2,8 @@ package com.blinky.istesa.Components;
 
 import java.util.List;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import com.blinky.istesa.DB;
 import com.blinky.istesa.Model.Admin;
 import com.blinky.istesa.Model.Dosen;
@@ -24,7 +26,7 @@ public class Login {
     public Account authenticate(){
         DB db = new DB();
 
-        String query_admin = "SELECT * FROM tb_admin WHERE u_admin = '" + id + "' and pw_admin = '" + pw + "'";
+        String query_admin = "SELECT * FROM tb_admin WHERE u_admin = '" + id + "'";
         String query_mhswa = "SELECT * FROM tb_mahasiswa WHERE id_mhswa = '" + id + "' and pw_mhswa = '" + pw + "'";
         String query_dosen = "SELECT * FROM tb_dosen WHERE u_dosen = '" + id + "' and pw_dosen = '" + pw + "'";
 
@@ -45,7 +47,13 @@ public class Login {
             }
         }
         else{
-            return new Account("Admin", new Admin(rs.get(0)));
+            Admin adm = new Admin(rs.get(0));
+            if(BCrypt.checkpw(pw, adm.getPwAdmin())){
+                return new Account("Admin", adm);
+            }
+            else{
+                return new Account();
+            }
         }
     }
 }
