@@ -191,12 +191,10 @@ public class Mahasiswa {
             "angkatan = '" + getAngkatan() + "'",
             "uid_rfid = '" + getUidRFID() + "'",
         };
-        String queryVal = String.join(",", data);
+        String queryVal = String.join(",", data);   
 
         String sql = "UPDATE tb_mahasiswa SET " + queryVal + " WHERE id_mhswa = '" + nimLama + "'";
         DB db = new DB();
-
-        System.out.println(sql);
 
         return db.runSql(sql);
     }

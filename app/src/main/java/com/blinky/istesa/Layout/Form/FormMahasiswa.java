@@ -47,11 +47,11 @@ public class FormMahasiswa{
 
     private static Input[] formInputList = new Input[]{
         new Input("idMahasiswa", new Label("NIM"), new TextField(), 0, "Masukkan NIM").setType("TextField"),
-        new Input("nmMahasiswa", new Label("Nama Mahasiswa"), new TextField(), 3, "Masukkan nama mahasiswa").setType("TextField"),
+        new Input("nmMahasiswa", new Label("Nama Mahasiswa"), new TextField(), 4, "Masukkan nama mahasiswa").setType("TextField"),
         new Input("idKelas", new Label("Kelas"), new ComboBox<String>(), 1, "Pilih Kelas").setType("ComboBox"),
         new Input("idProdi", new Label("Prodi"), new ComboBox<String>(), 2, "Pilih prodi").setType("ComboBox"),
-        new Input("angkatan", new Label("Angkatan"), new TextField(), 4, "Masukkan tahun angkatan").setType("TextField"),
-        new Input("pwMahasiswa", new Label("Password Mahasiswa"), new TextField(), 9, "Masukkan password akun mahasiswa").setType("TextField"),
+        new Input("angkatan", new Label("Angkatan"), new TextField(), 6, "Masukkan tahun angkatan").setType("TextField"),
+        new Input("pwMahasiswa", new Label("Password Mahasiswa"), new TextField(), 5, "Masukkan password akun mahasiswa").setType("TextField"),
     };
 
     private static List<Input> readyInput = new ArrayList<Input>();
@@ -206,8 +206,6 @@ public class FormMahasiswa{
                             List<Object> rs = db.runQuery("SELECT * FROM machine");
                             List<String> list = ((ArrayList<String>) rs.get(0));
         
-                            System.out.println(list.get(1));
-        
                             if(!list.get(1).toString().equals("")){
                                 data.setUidRFID(list.get(1).toString());
                                 data.update(data.getIdMahasiswa());
@@ -252,13 +250,13 @@ public class FormMahasiswa{
             mahasiswa.setIdAdmin(home.userAdmin.getIdAdmin());
 
             for(Prodi prodi : listProdi){
-                if(prodi.getNmProdi().equals(getInputValue("idProdi"))){
+                if(prodi.getIdProdi().equals(getInputValue("idProdi").split(" - ")[1])){
                     mahasiswa.setIdProdi(prodi.getIdProdi());
                 }
             }
 
             for(Kelas kelas : listKelas){
-                if(kelas.getNmKelas().equals(getInputValue("idKelas"))){
+                if(kelas.getIdKelas().equals(getInputValue("idKelas").split(" - ")[1])){
                     mahasiswa.setIdKelas(kelas.getIdKelas());
                 }
             }
@@ -315,12 +313,12 @@ public class FormMahasiswa{
 
                 if(input.getName().equals("idProdi")){
                     for(Prodi prodi : listProdi){
-                        input.getComboBox().getItems().add(prodi.getNmProdi());
+                        input.getComboBox().getItems().add(prodi.getNmProdi() + " - " + prodi.getIdProdi());
                     }
                 }
                 else if(input.getName().equals("idKelas")){
                     for(Kelas kelas : listKelas){
-                        input.getComboBox().getItems().add(kelas.getNmKelas());
+                        input.getComboBox().getItems().add(kelas.getNmKelas() + " - " + kelas.getIdKelas());
                     }
                 }
 
@@ -369,8 +367,6 @@ public class FormMahasiswa{
         Button btnAcc = new Button("Perbarui");
         btnAcc.setMaxWidth(Double.MAX_VALUE);
         btnAcc.setOnAction(e -> {
-            data = new Mahasiswa();
-
             data.setIdMahasiswa(getInputValue("idMahasiswa"));
             data.setNmMahasiswa(getInputValue("nmMahasiswa"));
             data.setPwMahasiswa(getInputValue("pwMahasiswa"));
@@ -378,13 +374,13 @@ public class FormMahasiswa{
             data.setIdAdmin(home.userAdmin.getIdAdmin());
 
             for(Prodi prodi : listProdi){
-                if(prodi.getNmProdi().equals(getInputValue("idProdi"))){
+                if(prodi.getIdProdi().equals(getInputValue("idProdi").split(" - ")[1])){
                     data.setIdProdi(prodi.getIdProdi());
                 }
             }
 
             for(Kelas kelas : listKelas){
-                if(kelas.getNmKelas().equals(getInputValue("idKelas"))){
+                if(kelas.getIdKelas().equals(getInputValue("idKelas").split(" - ")[1])){
                     data.setIdKelas(kelas.getIdKelas());
                 }
             }
@@ -429,7 +425,9 @@ public class FormMahasiswa{
 
                 if(input.getName().equals("idMahasiswa")){
                     nimLama = data.getByID(input.getIndex());
-                    System.out.println(nimLama);
+                }
+                if(input.getName().equals("pwMahasiswa")){
+                    input.getTextField().setText("");
                 }
 
                 span.getChildren().addAll(input.getLabel(), input.getTextField());
@@ -439,19 +437,19 @@ public class FormMahasiswa{
 
                 if(input.getName().equals("idProdi")){
                     for(Prodi prodi : listProdi){
-                        input.getComboBox().getItems().add(prodi.getNmProdi());
+                        input.getComboBox().getItems().add(prodi.getNmProdi() + " - " + prodi.getIdProdi());
 
-                        if(data.getIdProdi().equals(prodi.getNmProdi())){
-                            input.getComboBox().setValue(prodi.getNmProdi());
+                        if(data.getIdProdi().equals(prodi.getIdProdi())){
+                            input.getComboBox().setValue(prodi.getNmProdi() + " - " + prodi.getIdProdi());
                         }
                     }
                 }
                 else if(input.getName().equals("idKelas")){
                     for(Kelas kelas : listKelas){
-                        input.getComboBox().getItems().add(kelas.getNmKelas());
+                        input.getComboBox().getItems().add(kelas.getNmKelas() + " - " + kelas.getIdKelas());
 
-                        if(data.getIdKelas().equals(kelas.getNmKelas())){
-                            input.getComboBox().setValue(kelas.getNmKelas());
+                        if(data.getIdKelas().equals(kelas.getIdKelas())){
+                            input.getComboBox().setValue(kelas.getNmKelas() + " - " + kelas.getIdKelas());
                         }
                     }
                 }
@@ -561,7 +559,6 @@ public class FormMahasiswa{
         List<Object> rs = db.runQuery("SELECT * FROM tb_prodi");
 
         for(int i = 0; i < rs.size(); i++){
-            // System.out.println(rs.get(i));
             Prodi prodi = new Prodi(rs.get(i));
 
             listProdi.add(prodi);
@@ -575,7 +572,6 @@ public class FormMahasiswa{
         List<Object> rs = db.runQuery("SELECT * FROM tb_kelas");
 
         for(int i = 0; i < rs.size(); i++){
-            // System.out.println(rs.get(i));
             Kelas kelas = new Kelas(rs.get(i));
 
             listKelas.add(kelas);

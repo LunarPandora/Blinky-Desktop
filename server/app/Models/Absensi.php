@@ -12,9 +12,9 @@ class Absensi extends Model
     protected $table = "tb_absensi";
 
     protected $fillable = [
-        'id_mhswa',
+        'id_mahasiswa',
         'id_jadwal',
         'waktu_absen',
-        'id_status_absensi',
+        'kode_status_absensi',
     ];
 }

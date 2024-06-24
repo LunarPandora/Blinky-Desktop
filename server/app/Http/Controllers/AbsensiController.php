@@ -8,22 +8,22 @@ use Carbon\Carbon;
 
 class AbsensiController extends Controller
 {
-    private function hariIndo($hariInggris) {
+    private function hari($hariInggris) {
         switch ($hariInggris) {
           case 'Sunday':
-            return 'Minggu';
+            return '0';
           case 'Monday':
-            return 'Senin';
+            return '1';
           case 'Tuesday':
-            return 'Selasa';
+            return '2';
           case 'Wednesday':
-            return 'Rabu';
+            return '3';
           case 'Thursday':
-            return 'Kamis';
+            return '4';
           case 'Friday':
-            return 'Jumat';
+            return '5';
           case 'Saturday':
-            return 'Sabtu';
+            return '6';
           default:
             return 'hari tidak valid';
         }
@@ -38,28 +38,60 @@ class AbsensiController extends Controller
         ->select('id_mhswa', 'id_kelas')
         ->where('uid_rfid', $request->uid_rfid)->first();
 
-        $today = $this->hariIndo(date('l'));
-        $jam = Carbon::now()->format("H:i:s");
+        if(!is_null($mhswa)){
+            $today = $this->hari(date('l'));
+            $jam = Carbon::now();
+    
+            $jadwal = DB::table('tb_jadwal')
+            ->select('id_jadwal', 'jam_mulai', 'jam_selesai')
+            ->where([
+                ["id_kelas", "=", $mhswa->id_kelas],
+                ["hari", "=", $today],
+                ["jam_mulai", ">=", "DATE_SUB('" . $jam->format("H:i:s") . "', INTERVAL 15 MINUTES)"],
+                ["jam_selesai", ">=", $jam->format("H:i:s")]
+            ])->first();
+    
+            if(!is_null($jadwal)){
+                $waktuMulai = Carbon::createFromTimeString($jadwal->jam_mulai);
+                $waktuSelesai = Carbon::createFromTimeString($jadwal->jam_selesai);
+    
+                $waktuAbsen = Carbon::createFromTimeString($jadwal->jam_mulai)->subMinutes(15);
 
-        $jadwal = DB::table('tb_jadwal')
-        ->select('id_jadwal')
-        ->where([
-            ["id_kelas", "=", $mhswa->id_kelas],
-            ["hari", "=", $today],
-            ["jam_mulai", "<=", $jam],
-            ["jam_selesai", ">=", $jam]
-        ])->first();
-
-        if(!is_null($jadwal)){
-            $absensi = array(
-                'id_mhswa' => $mhswa->id_mhswa,
-                'id_jadwal' => $jadwal->id_jadwal,
-                'waktu_absen' => Carbon::now(),
-                'id_status_absensi' => 1
-            );
-
-            if(DB::table('tb_absensi')->insert($absensi)){
-                return response("success");
+                if($jam >= $waktuAbsen && $jam <= $waktuSelesai){
+                    if($jam >= $waktuAbsen && $jam <= $waktuMulai){
+                        $absensi = array(
+                            'id_mahasiswa' => $mhswa->id_mhswa,
+                            'id_jadwal' => $jadwal->id_jadwal,
+                            'waktu_absen' => Carbon::now(),
+                            'kode_status_absensi' => 1
+                        );
+    
+                        if(DB::table('tb_absensi')->insert($absensi)){
+                            return response("success");
+                        }
+                        else{
+                            return response("failed");
+                        }
+                    }
+                    else{
+                        $absensi = array(
+                            'id_mahasiswa' => $mhswa->id_mhswa,
+                            'id_jadwal' => $jadwal->id_jadwal,
+                            'waktu_absen' => Carbon::now(),
+                            'kode_status_absensi' => 2
+                        );
+    
+                        if(DB::table('tb_absensi')->insert($absensi)){
+                            return response("success");
+                        }
+                        else{
+                            return response("failed");
+                        }
+                    }
+                }
+                else{
+                    return response("failed");
+                }
             }
             else{
                 return response("failed");

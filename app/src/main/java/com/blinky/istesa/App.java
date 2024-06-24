@@ -45,8 +45,8 @@ public class App extends Application {
 
         Scene scene = new Scene(border, 1280, 720);
         stage.setScene(scene);
-        stage.setMaximized(true);
-        // stage.setFullScreen(true);
+        // stage.setMaximized(true);
+        stage.setFullScreen(true);
 
         scene.getStylesheets().add(App.class.getResource("css/font.css").toExternalForm());
         scene.getStylesheets().add(App.class.getResource("css/style.css").toExternalForm());

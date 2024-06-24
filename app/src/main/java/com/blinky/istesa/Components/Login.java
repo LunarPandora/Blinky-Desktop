@@ -27,7 +27,7 @@ public class Login {
         DB db = new DB();
 
         String query_admin = "SELECT * FROM tb_admin WHERE u_admin = '" + id + "'";
-        String query_mhswa = "SELECT * FROM tb_mahasiswa WHERE id_mhswa = '" + id + "' and pw_mahasiswa = '" + pw + "'";
+        String query_mhswa = "SELECT * FROM tb_mahasiswa WHERE id_mhswa = '" + id + "'";
         String query_dosen = "SELECT * FROM tb_dosen WHERE u_dosen = '" + id + "' and pw_dosen = '" + pw + "'";
 
         List<Object> rs = db.runQuery(query_admin);
@@ -43,7 +43,13 @@ public class Login {
                 }
             }
             else{
-                return new Account("Mahasiswa", new Mahasiswa(rs.get(0)));
+                Mahasiswa m = new Mahasiswa(rs.get(0));
+                if(BCrypt.checkpw(pw, m.getPwMahasiswa())){
+                    return new Account("Mahasiswa", m);
+                }
+                else{
+                    return new Account();
+                }
             }
         }
         else{
