@@ -27,7 +27,7 @@ public class Login {
         DB db = new DB();
 
         String query_admin = "SELECT * FROM tb_admin WHERE u_admin = '" + id + "'";
-        String query_mhswa = "SELECT * FROM tb_mahasiswa WHERE id_mhswa = '" + id + "' and pw_mhswa = '" + pw + "'";
+        String query_mhswa = "SELECT * FROM tb_mahasiswa WHERE id_mhswa = '" + id + "' and pw_mahasiswa = '" + pw + "'";
         String query_dosen = "SELECT * FROM tb_dosen WHERE u_dosen = '" + id + "' and pw_dosen = '" + pw + "'";
 
         List<Object> rs = db.runQuery(query_admin);

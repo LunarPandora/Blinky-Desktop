@@ -8,8 +8,16 @@ public class TimePicker {
     private HBox inputPane;
 
     public TimePicker(){
-        hour = new NumPicker(0, 23, 10, "h", "Jam");
-        minute = new NumPicker(0, 55, 30, "m", "Menit");
+        hour = new NumPicker(0, 23, 10, "h", "Jam", 5, 5);
+        minute = new NumPicker(0, 55, 30, "m", "Menit", 1, 1);
+
+        inputPane = new HBox();
+        inputPane.getChildren().addAll(hour.getPane(), minute.getPane());
+    }
+
+    public TimePicker(int defIncrementVal, int defDecrementVal){
+        hour = new NumPicker(0, 23, 10, "h", "Jam", defIncrementVal, defDecrementVal);
+        minute = new NumPicker(0, 55, 30, "m", "Menit", defIncrementVal, defDecrementVal);
 
         inputPane = new HBox();
         inputPane.getChildren().addAll(hour.getPane(), minute.getPane());

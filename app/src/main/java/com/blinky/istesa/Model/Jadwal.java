@@ -19,6 +19,7 @@ public class Jadwal {
     private final StringProperty idMatkul = new SimpleStringProperty();
     private final StringProperty tglDitambah = new SimpleStringProperty();
     private final StringProperty tglDiupdate = new SimpleStringProperty();
+    private final StringProperty nmMatkul = new SimpleStringProperty();
 
     public Jadwal(){
 
@@ -36,6 +37,10 @@ public class Jadwal {
         idMatkul.set(list.get(6).toString());
         tglDitambah.set(list.get(7).toString());
         tglDiupdate.set(list.get(8).toString());
+
+        if(list.size() > 9){
+            nmMatkul.set(list.get(10).toString());
+        }
     }
 
     public String getByID(int i){
@@ -149,6 +154,18 @@ public class Jadwal {
 
     public void setTglDiupdate(String tglDiupdate) {
         this.tglDiupdate.set(tglDiupdate);
+    }
+
+    public StringProperty nmMatkulProperty() {
+        return nmMatkul;
+    }
+    
+    public String getNmMatkul() {
+        return nmMatkul.get();
+    }
+    
+    public void setNmMatkul(String nmMatkul) {
+        this.nmMatkul.set(nmMatkul);
     }
 
     public Boolean create(){

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.blinky.istesa.Components.Account;
 import com.blinky.istesa.Components.TableRoute;
+import com.blinky.istesa.Layout.Form.FormAbsensiDosen;
 import com.blinky.istesa.Layout.Form.FormDosen;
 import com.blinky.istesa.Layout.Form.FormJabatan;
 import com.blinky.istesa.Layout.Form.FormJadwal;
@@ -14,7 +15,8 @@ import com.blinky.istesa.Layout.Form.FormMatkul;
 import com.blinky.istesa.Layout.Form.FormProdi;
 import com.blinky.istesa.Layout.Form.FormStatusAbsensi;
 import com.blinky.istesa.Layout.Table.Table;
-import com.blinky.istesa.Layout.Table.TableAbsensi;
+import com.blinky.istesa.Layout.Table.TableAbsensiDosen;
+import com.blinky.istesa.Layout.Table.TableAbsensiMahasiswa;
 import com.blinky.istesa.Layout.Table.TableDosen;
 import com.blinky.istesa.Layout.Table.TableJabatan;
 import com.blinky.istesa.Layout.Table.TableJadwal;
@@ -90,16 +92,14 @@ public class Home {
             userDosen = acc.getDosenData();
             listTable = new TableRoute[]
             {
-                new TableRoute("TableAbsensi", new TableAbsensi(userDosen.getIdDosen(), "dosen"), new Button("Absensi Kelas")),
-                // "Dosen", "Kelas", "Matkul", "Prodi", "Warek", "Kaprodi", "StatusAbsensi"
+                new TableRoute("TableAbsensiDosen", new TableAbsensiDosen(userDosen.getIdDosen()), new Button("Absensi Kelas")),
             };
         }
         else{
             userMhswa = acc.getMhswaData();
             listTable = new TableRoute[]
             {
-                new TableRoute("TableAbsensi", new TableAbsensi(userMhswa.getIdMahasiswa(), "mhswa"), new Button("Histori Absensi")),
-                // "Dosen", "Kelas", "Matkul", "Prodi", "Warek", "Kaprodi", "StatusAbsensi"
+                new TableRoute("TableAbsensi", new TableAbsensiMahasiswa(userMhswa), new Button("Histori Absensi")),
             };
         }
     }
@@ -228,7 +228,13 @@ public class Home {
         btn_hapus.getStyleClass().addAll(new String[]{"btn", "btn-red"});
         btn_refresh.getStyleClass().addAll(new String[]{"btn", "btn-green"});
 
-        buttonPane.getChildren().addAll(btn_tambah, btn_edit, btn_hapus, btn_refresh);
+        if(userType.equals("Mahasiswa")){
+            buttonPane.getChildren().addAll(btn_refresh);
+        }
+        else{
+            buttonPane.getChildren().addAll(btn_tambah, btn_edit, btn_hapus, btn_refresh);
+        }
+
         buttonPane.getStyleClass().addAll(new String[]{"bg-white", "rounded"});
 
         btn_tambah.setOnAction(e -> {
@@ -238,8 +244,8 @@ public class Home {
                         if(jenisTabel.equals("TableMatkul")){
                             new FormMatkul(App.getStage(), this, "create");
                         }
-                        else if (jenisTabel.equals("TableAbsensi")) {
-                            // Handle TableAbsensi
+                        else if (jenisTabel.equals("TableAbsensiDosen")) {
+                            new FormAbsensiDosen(App.getStage(), this, "create", userDosen);
                         }
                         else if (jenisTabel.equals("TableDosen")) {
                             new FormDosen(App.getStage(), this, "create");
@@ -278,8 +284,9 @@ public class Home {
                             TableMatkul tableMatkul = (TableMatkul) listTable[i].table;
                             new FormMatkul(App.getStage(), this, "edit", tableMatkul.getSelectedData());
                         }
-                        else if (jenisTabel.equals("TableAbsensi")) {
-                            TableAbsensi tableAbsensi = (TableAbsensi) listTable[i].table;
+                        else if (jenisTabel.equals("TableAbsensiDosen")) {
+                            TableAbsensiDosen tableAbsensiMahasiswa = (TableAbsensiDosen) listTable[i].table;
+                            new FormAbsensiDosen(App.getStage(), this, "edit", tableAbsensiMahasiswa.getSelectedData(), userDosen);
                         }
                         else if (jenisTabel.equals("TableDosen")) {
                             TableDosen tableDosen = (TableDosen) listTable[i].table;
@@ -325,9 +332,9 @@ public class Home {
                             TableMatkul tableMatkul = (TableMatkul) listTable[i].table;
                             new FormMatkul(App.getStage(), this, "delete", tableMatkul.getSelectedData());
                         }
-                        else if (jenisTabel.equals("TableAbsensi")) {
-                            TableAbsensi tableAbsensi = (TableAbsensi) listTable[i].table;
-                            // Handle TableAbsensi
+                        else if (jenisTabel.equals("TableAbsensiDosen")) {
+                            TableAbsensiDosen tableAbsensiMahasiswa = (TableAbsensiDosen) listTable[i].table;
+                            new FormAbsensiDosen(App.getStage(), this, "delete", tableAbsensiMahasiswa.getSelectedData(), userDosen);
                         }
                         else if (jenisTabel.equals("TableDosen")) {
                             TableDosen tableDosen = (TableDosen) listTable[i].table;

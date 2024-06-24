@@ -1,6 +1,7 @@
 package com.blinky.istesa.Layout.Input;
 
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
@@ -11,6 +12,7 @@ public class Input {
     private TextField textField;
     private ComboBox<String> comboBox;
     private TimePicker timePicker;
+    private DatePicker datePicker;
 
     private final int indexNumber;
     private final String placeholder;
@@ -30,12 +32,22 @@ public class Input {
         this.comboBox = cb;
         this.indexNumber = idx;
         this.placeholder = placeholder;
+
+        comboBox.setValue(placeholder);
     }
 
     public Input(String name, Label label, TimePicker tp , int idx, String placeholder) {
         this.name = name;
         this.label = label;
         this.timePicker = tp;
+        this.indexNumber = idx;
+        this.placeholder = placeholder;
+    }
+
+    public Input(String name, Label label, DatePicker dp , int idx, String placeholder) {
+        this.name = name;
+        this.label = label;
+        this.datePicker = dp;
         this.indexNumber = idx;
         this.placeholder = placeholder;
     }
@@ -62,6 +74,10 @@ public class Input {
 
     public TimePicker getTimePicker() {
         return timePicker;
+    }
+
+    public DatePicker getDatePicker() {
+        return datePicker;
     }
 
     public String getType(){

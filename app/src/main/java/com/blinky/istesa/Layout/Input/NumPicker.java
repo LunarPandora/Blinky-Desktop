@@ -21,6 +21,8 @@ public class NumPicker extends TextField {
 
     private int minValue;
     private int maxValue;
+    private int incrementVal = 5;
+    private int decrementVal = 5;
 
     private Button decValue;
     private Button incValue;
@@ -48,7 +50,7 @@ public class NumPicker extends TextField {
 
     public void increaseValue(String type){
         int currentVal = getNum(); 
-        int x = (type == "m" ? 5 : 1);
+        int x = (type == "m" ? incrementVal : 1);
 
         if(this.maxValue > currentVal){
             setNum(currentVal + x);
@@ -67,7 +69,7 @@ public class NumPicker extends TextField {
 
     public void decreaseValue(String type){
         int currentVal = getNum();
-        int x = (type == "m" ? 5 : 1);
+        int x = (type == "m" ? decrementVal : 1);
 
         if(this.minValue < currentVal){
             setNum(currentVal - x);
@@ -95,9 +97,12 @@ public class NumPicker extends TextField {
         }
     }
 
-    public NumPicker(int minValue, int maxValue, int initialValue, String type, String pl){
+    public NumPicker(int minValue, int maxValue, int initialValue, String type, String pl, int defaultIncrementVal, int defaultDecrementVal){
         this.minValue = minValue;
         this.maxValue = maxValue;
+        this.incrementVal = defaultIncrementVal;
+        this.decrementVal = defaultDecrementVal;
+        
         this.numberPane = new HBox();
 
         num = new SimpleIntegerProperty(initialValue);
